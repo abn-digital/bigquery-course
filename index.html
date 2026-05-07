@@ -52,6 +52,21 @@
         .snav-item.active .snav-label{color:#0f172a;font-weight:700}
         .placeholder{background:repeating-linear-gradient(45deg,#f1f5f9,#f1f5f9 10px,#e2e8f0 10px,#e2e8f0 20px);border-radius:12px;padding:2rem;color:#94a3b8;font-size:.85rem;text-align:center;border:1.5px dashed #cbd5e1}
         footer{background:linear-gradient(135deg,#0f172a,#1e1b4b);color:#fff}
+        /* Exercise collapsible */
+        .exercise-card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all .35s ease}
+        .exercise-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);border-color:rgba(91,33,182,.18)}
+        .exercise-card details{padding:0}
+        .exercise-card details summary{cursor:pointer;list-style:none;padding:10px 20px;background:linear-gradient(135deg,rgba(91,33,182,.04),rgba(14,165,233,.04));border-top:1px solid rgba(100,116,139,.08);font-size:.8rem;font-weight:600;color:#5b21b6;display:flex;align-items:center;gap:8px;transition:background .2s}
+        .exercise-card details summary:hover{background:linear-gradient(135deg,rgba(91,33,182,.08),rgba(14,165,233,.08))}
+        .exercise-card details summary::-webkit-details-marker{display:none}
+        .exercise-card details summary::before{content:'▶';font-size:.65rem;transition:transform .25s ease;display:inline-block;color:#7c3aed}
+        .exercise-card details[open] summary::before{transform:rotate(90deg)}
+        .exercise-card details[open] summary{background:rgba(91,33,182,.06);border-bottom:1px solid rgba(91,33,182,.08)}
+        .exercise-card details .solution-code{padding:16px 20px}
+        .level-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:12px;font-size:.75rem;font-weight:700;letter-spacing:.04em}
+        .level-1{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.05));color:#059669;border:1px solid rgba(16,185,129,.2)}
+        .level-2{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(245,158,11,.05));color:#b45309;border:1px solid rgba(245,158,11,.2)}
+        .level-3{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.05));color:#dc2626;border:1px solid rgba(239,68,68,.2)}
     </style>
 </head>
 <body class="bg-main">
@@ -64,7 +79,6 @@
     <div class="snav-divider"></div>
     <div class="snav-item active" data-section="hero"><div class="snav-dot"></div><span class="snav-label">Inicio</span></div>
     <div class="snav-item" data-section="sql-intro"><div class="snav-dot"></div><span class="snav-label">SQL Intro</span></div>
-    <div class="snav-item" data-section="ejercicios"><div class="snav-dot"></div><span class="snav-label">Ejercicios</span></div>
     <div class="snav-item" data-section="bigquery-env"><div class="snav-dot"></div><span class="snav-label">BigQuery</span></div>
     <div class="snav-item" data-section="practica"><div class="snav-dot"></div><span class="snav-label">Práctica</span></div>
     <div class="snav-item" data-section="ia"><div class="snav-dot"></div><span class="snav-label">IA</span></div>
@@ -280,101 +294,11 @@
             <div class="mt-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-xs text-slate-600">
                 <strong class="text-emerald-700">Resultado:</strong> Ana → $80 · Luis → $80 · Marta → NULL (no tiene compras, pero aparece por el LEFT JOIN)
             </div>
-        </div>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════
-     EJERCICIOS — NIVEL 1
-══════════════════════════════════════ -->
-<section id="ejercicios" class="py-24 bg-slate-50">
-    <div class="max-w-6xl mx-auto px-6 md:px-10">
-        <div class="text-center mb-16 scroll-reveal">
-            <span class="tag tag-violet mb-4 inline-block">Práctica guiada</span>
-            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-slate-900">Ejercicios SQL — Nivel 1</h2>
-            <p class="text-slate-500 max-w-2xl mx-auto">Queries reales sobre las tablas del workshop. Copiá cada una en el editor de BigQuery y ejecutala.</p>
-        </div>
-        <div class="grid md:grid-cols-2 gap-6">
-            <!-- Ejercicio 1 -->
-            <div class="card p-6 scroll-reveal stagger-1">
-                <div class="flex items-start gap-3 mb-4">
-                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-xs font-extrabold flex items-center justify-center">1</span>
-                    <div>
-                        <p class="font-bold text-slate-800 text-sm">Mostrar nombre y mail de todos los clientes</p>
-                        <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_customers</code></p>
-                    </div>
-                </div>
-                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
-                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name</span>, <span class="text-emerald-300">email</span></p>
-                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_customers`</span></p>
-                </div>
-                <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
-                    <span class="text-emerald-500">&#9654;</span> Prueba: agregá <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">country</code> al SELECT
-                </div>
-            </div>
-            <!-- Ejercicio 2 -->
-            <div class="card p-6 scroll-reveal stagger-2">
-                <div class="flex items-start gap-3 mb-4">
-                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-xs font-extrabold flex items-center justify-center">2</span>
-                    <div>
-                        <p class="font-bold text-slate-800 text-sm">Productos que cuesten más de $50, ordenados por precio</p>
-                        <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_products</code> · Filtro + orden</p>
-                    </div>
-                </div>
-                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
-                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name</span>, <span class="text-emerald-300">price</span></p>
-                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_products`</span></p>
-                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">price</span> &gt; <span class="text-rose-300">50</span></p>
-                    <p><span class="text-sky-400">ORDER BY</span> <span class="text-emerald-300">price</span> <span class="text-sky-400">DESC</span></p>
-                </div>
-                <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
-                    <span class="text-emerald-500">&#9654;</span> Prueba: cambiá <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">DESC</code> por <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">ASC</code>
-                </div>
-            </div>
-            <!-- Ejercicio 3 -->
-            <div class="card p-6 scroll-reveal stagger-3">
-                <div class="flex items-start gap-3 mb-4">
-                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-xs font-extrabold flex items-center justify-center">3</span>
-                    <div>
-                        <p class="font-bold text-slate-800 text-sm">¿Cuántas órdenes tienen estado <code class="font-mono bg-slate-100 px-1 rounded text-xs">pending</code>?</p>
-                        <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_orders</code> · COUNT + WHERE</p>
-                    </div>
-                </div>
-                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
-                    <p><span class="text-sky-400">SELECT</span> <span class="text-sky-400">COUNT</span>(*)</p>
-                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
-                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">status</span> = <span class="text-rose-300">'pending'</span></p>
-                </div>
-                <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
-                    <span class="text-emerald-500">&#9654;</span> Prueba: reemplazá <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">'pending'</code> por <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">'completed'</code>
-                </div>
-            </div>
-            <!-- Ejercicio 4 -->
-            <div class="card p-6 scroll-reveal stagger-4">
-                <div class="flex items-start gap-3 mb-4">
-                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-xs font-extrabold flex items-center justify-center">4</span>
-                    <div>
-                        <p class="font-bold text-slate-800 text-sm">¿Y la lista de esas órdenes pendientes?</p>
-                        <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_orders</code> · SELECT columnas específicas</p>
-                    </div>
-                </div>
-                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
-                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">id</span>, <span class="text-emerald-300">product_id</span>, <span class="text-emerald-300">status</span></p>
-                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
-                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">status</span> = <span class="text-rose-300">'pending'</span></p>
-                </div>
-                <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
-                    <span class="text-emerald-500">&#9654;</span> Prueba: agregá <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">order_date</code> al SELECT
-                </div>
-            </div>
-        </div>
-        <!-- Tip -->
-        <div class="mt-8 p-5 card scroll-reveal" style="border-left:4px solid #7c3aed">
-            <div class="flex items-start gap-3">
-                <span class="text-violet-500 text-lg flex-shrink-0">💡</span>
-                <div>
-                    <p class="font-bold text-slate-800 text-sm mb-1">Tip: cada query tiene un propósito</p>
-                    <p class="text-slate-500 text-xs leading-relaxed">El ejercicio 3 te dice <em>cuántos</em> hay. El ejercicio 4 te muestra <em>cuáles</em> son. En análisis de datos siempre arrancás con el conteo y después profundizás con el detalle.</p>
+            <!-- Venn diagram: tipos de JOIN -->
+            <div class="mt-6 text-center">
+                <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-4">Tipos de JOIN — Diagrama de Venn</p>
+                <div class="inline-block rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-white p-4">
+                    <img src="https://docs.agilebase.co.uk/joins-venn.png" alt="Venn diagram de los tipos de SQL JOIN: INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN" class="max-w-full md:max-w-lg mx-auto rounded-lg" style="display:block">
                 </div>
             </div>
         </div>
@@ -522,6 +446,254 @@
         <!-- Intro contextual M3 -->
         <div class="card p-6 mb-10 scroll-reveal" style="border-left:4px solid #059669;background:rgba(16,185,129,.03)">
             <p class="text-slate-700 text-sm leading-relaxed"><strong>¿Por qué esto importa?</strong> Saber escribir una query es el primer paso. El segundo es conectar datos reales, automatizar su procesamiento y no depender de exports manuales. En este módulo pasamos de consultar datos a <em>construir una pipeline</em> que corra sola todos los días.</p>
+        </div>
+
+        <!-- ── Ejercicios interactivos por nivel ── -->
+        <div class="card-elevated p-8 md:p-12 mb-8 scroll-reveal">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="tag tag-emerald">Práctica en vivo</span>
+            </div>
+            <h3 class="text-2xl font-extrabold text-slate-900 mb-2">Ejercicios con tablas reales</h3>
+            <p class="text-slate-500 text-sm mb-8">Resolvé cada ejercicio en el editor de BigQuery. Hacé clic en <strong class="text-violet-600">"Ver solución"</strong> para ver la query.</p>
+
+            <!-- ── NIVEL 1 ── -->
+            <div class="mb-10">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="level-badge level-1">🟢 Nivel 1 — SELECT, WHERE, ORDER BY</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <!-- N1 - Ejercicio 1 -->
+                    <div class="exercise-card">
+                        <div class="p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-extrabold flex items-center justify-center">1</span>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">Mostrar nombre y mail de todos los clientes</p>
+                                    <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_customers</code></p>
+                                </div>
+                            </div>
+                        </div>
+                        <details>
+                            <summary>Ver solución</summary>
+                            <div class="solution-code">
+                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name</span>, <span class="text-emerald-300">email</span></p>
+                                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_customers`</span></p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <!-- N1 - Ejercicio 2 -->
+                    <div class="exercise-card">
+                        <div class="p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-extrabold flex items-center justify-center">2</span>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">Mostrar los productos que cuesten más de $50, ordenados</p>
+                                    <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_products</code> · WHERE + ORDER BY</p>
+                                </div>
+                            </div>
+                        </div>
+                        <details>
+                            <summary>Ver solución</summary>
+                            <div class="solution-code">
+                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name</span>, <span class="text-emerald-300">price</span></p>
+                                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_products`</span></p>
+                                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">price</span> &gt; <span class="text-rose-300">50</span></p>
+                                    <p><span class="text-sky-400">ORDER BY</span> <span class="text-emerald-300">price</span> <span class="text-sky-400">DESC</span></p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <!-- N1 - Ejercicio 3 -->
+                    <div class="exercise-card">
+                        <div class="p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-extrabold flex items-center justify-center">3</span>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">¿Cuántas órdenes tienen estado <code class="font-mono bg-slate-100 px-1 rounded text-xs">pending</code>?</p>
+                                    <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_orders</code> · COUNT + WHERE</p>
+                                </div>
+                            </div>
+                        </div>
+                        <details>
+                            <summary>Ver solución</summary>
+                            <div class="solution-code">
+                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                    <p><span class="text-sky-400">SELECT</span> <span class="text-sky-400">COUNT</span>(*)</p>
+                                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
+                                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">status</span> = <span class="text-rose-300">"pending"</span></p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <!-- N1 - Ejercicio 4 -->
+                    <div class="exercise-card">
+                        <div class="p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-extrabold flex items-center justify-center">4</span>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">¿Y la lista de esas órdenes pendientes?</p>
+                                    <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_orders</code> · SELECT columnas específicas</p>
+                                </div>
+                            </div>
+                        </div>
+                        <details>
+                            <summary>Ver solución</summary>
+                            <div class="solution-code">
+                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">id</span>, <span class="text-emerald-300">product_id</span>, <span class="text-emerald-300">status</span></p>
+                                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
+                                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">status</span> = <span class="text-rose-300">"pending"</span></p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── NIVEL 2 ── -->
+            <div class="mb-10">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="level-badge level-2">🟡 Nivel 2 — GROUP BY y agregaciones</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <!-- N2 - Ejercicio 1 -->
+                    <div class="exercise-card">
+                        <div class="p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-700 text-xs font-extrabold flex items-center justify-center">5</span>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">¿Cuántos clientes hay por cada país?</p>
+                                    <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_customers</code> · COUNT + GROUP BY</p>
+                                </div>
+                            </div>
+                        </div>
+                        <details>
+                            <summary>Ver solución</summary>
+                            <div class="solution-code">
+                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                    <p><span class="text-sky-400">SELECT</span></p>
+                                    <p class="pl-2"><span class="text-sky-400">COUNT</span>(<span class="text-emerald-300">name</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">name</span>,</p>
+                                    <p class="pl-2"><span class="text-emerald-300">country</span></p>
+                                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_customers`</span></p>
+                                    <p><span class="text-sky-400">GROUP BY ALL</span></p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <!-- N2 - Ejercicio 2 -->
+                    <div class="exercise-card">
+                        <div class="p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-700 text-xs font-extrabold flex items-center justify-center">6</span>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">¿Cuál es el precio promedio por categoría?</p>
+                                    <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_products</code> · AVG + GROUP BY</p>
+                                </div>
+                            </div>
+                        </div>
+                        <details>
+                            <summary>Ver solución</summary>
+                            <div class="solution-code">
+                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                    <p><span class="text-sky-400">SELECT</span></p>
+                                    <p class="pl-2"><span class="text-sky-400">AVG</span>(<span class="text-emerald-300">price</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">precio_promedio</span>,</p>
+                                    <p class="pl-2"><span class="text-emerald-300">category</span></p>
+                                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_products`</span></p>
+                                    <p><span class="text-sky-400">GROUP BY ALL</span></p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <!-- N2 - Ejercicio 3 -->
+                    <div class="exercise-card md:col-span-2 md:max-w-[calc(50%-0.5rem)]">
+                        <div class="p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-700 text-xs font-extrabold flex items-center justify-center">7</span>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">¿Cuántas órdenes hay por cada estado?</p>
+                                    <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_orders</code> · COUNT + GROUP BY</p>
+                                </div>
+                            </div>
+                        </div>
+                        <details>
+                            <summary>Ver solución</summary>
+                            <div class="solution-code">
+                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                    <p><span class="text-sky-400">SELECT</span></p>
+                                    <p class="pl-2"><span class="text-sky-400">COUNT</span>(<span class="text-emerald-300">id</span>),</p>
+                                    <p class="pl-2"><span class="text-emerald-300">status</span></p>
+                                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
+                                    <p><span class="text-sky-400">GROUP BY ALL</span></p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── NIVEL 3 ── -->
+            <div>
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="level-badge level-3">🔴 Nivel 3 — JOINs entre tablas</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <!-- N3 - Ejercicio 1 -->
+                    <div class="exercise-card">
+                        <div class="p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-red-100 text-red-700 text-xs font-extrabold flex items-center justify-center">8</span>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">Mostrar todas las órdenes (id), con el nombre del producto y su categoría</p>
+                                    <p class="text-slate-400 text-xs mt-0.5">Tablas: <code class="font-mono">test_orders</code> + <code class="font-mono">test_products</code> · INNER JOIN</p>
+                                </div>
+                            </div>
+                        </div>
+                        <details>
+                            <summary>Ver solución</summary>
+                            <div class="solution-code">
+                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                    <p><span class="text-sky-400">SELECT</span></p>
+                                    <p class="pl-2"><span class="text-emerald-300">o.id</span>,</p>
+                                    <p class="pl-2"><span class="text-emerald-300">p.name</span>,</p>
+                                    <p class="pl-2"><span class="text-emerald-300">p.category</span></p>
+                                    <p class="mt-2"><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span> <span class="text-emerald-300">o</span></p>
+                                    <p class="mt-2"><span class="text-sky-400">INNER JOIN</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_products`</span> <span class="text-emerald-300">p</span></p>
+                                    <p class="pl-2"><span class="text-sky-400">ON</span> <span class="text-emerald-300">o.product_id</span> = <span class="text-emerald-300">p.id</span></p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <!-- N3 - Ejercicio 2 -->
+                    <div class="exercise-card">
+                        <div class="p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-red-100 text-red-700 text-xs font-extrabold flex items-center justify-center">9</span>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">Mostrar las órdenes (id), con el nombre del cliente y la fecha</p>
+                                    <p class="text-slate-400 text-xs mt-0.5">Tablas: <code class="font-mono">test_orders</code> + <code class="font-mono">test_customers</code> · INNER JOIN</p>
+                                </div>
+                            </div>
+                        </div>
+                        <details>
+                            <summary>Ver solución</summary>
+                            <div class="solution-code">
+                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                    <p><span class="text-sky-400">SELECT</span></p>
+                                    <p class="pl-2"><span class="text-emerald-300">o.id</span>,</p>
+                                    <p class="pl-2"><span class="text-emerald-300">c.name</span>,</p>
+                                    <p class="pl-2"><span class="text-emerald-300">o.order_date</span></p>
+                                    <p class="mt-2"><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span> <span class="text-emerald-300">o</span></p>
+                                    <p class="mt-2"><span class="text-sky-400">INNER JOIN</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_customers`</span> <span class="text-emerald-300">c</span></p>
+                                    <p class="pl-2"><span class="text-sky-400">ON</span> <span class="text-emerald-300">o.customer_id</span> = <span class="text-emerald-300">c.id</span></p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Bloque A: Table Function -->
