@@ -142,7 +142,7 @@
                     <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Tipos de datos: strings, números, fechas, booleanos</span></li>
                     <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Cómo leer e interpretar el resultado de una consulta</span></li>
                 </ul>
-                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                <div class="bg-slate-900 text-slate-300 rounded-xl p-5 font-mono text-sm">
                     <p class="text-slate-500 text-xs mb-3">-- Mi primera query sobre clientes reales</p>
                     <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name, country, signup_date</span></p>
                     <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_customers`</span></p>
@@ -169,7 +169,7 @@
                     <li class="flex items-start gap-3"><span class="check-sky mt-0.5">✓</span><span class="text-slate-600 text-sm">Ordenar resultados con <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">ORDER BY</code></span></li>
                     <li class="flex items-start gap-3"><span class="check-sky mt-0.5">✓</span><span class="text-slate-600 text-sm"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">HAVING</code> vs <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">WHERE</code>: cuándo usar cada uno</span></li>
                 </ul>
-                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                <div class="bg-slate-900 text-slate-300 rounded-xl p-5 font-mono text-sm">
                     <p class="text-slate-500 text-xs mb-3">-- Órdenes por categoría de producto</p>
                     <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">p.category</span>, <span class="text-sky-400">COUNT</span>(*) <span class="text-sky-400">AS</span> <span class="text-amber-300">total_ordenes</span>,</p>
                     <p class="pl-4"><span class="text-sky-400">SUM</span>(<span class="text-emerald-300">o.quantity * p.price</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">revenue</span></p>
@@ -229,7 +229,7 @@
                 </div>
             </div>
             <!-- Ejemplo reporte -->
-            <div class="mt-6 p-4 rounded-xl bg-slate-900 font-mono text-sm">
+            <div class="mt-6 p-4 rounded-xl bg-slate-900 text-slate-300 font-mono text-sm">
                 <p class="text-slate-500 text-xs mb-3">-- Reporte: revenue por categoría y mes</p>
                 <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">p.category</span>, <span class="text-emerald-300">DATE_TRUNC(o.order_date, MONTH)</span> <span class="text-sky-400">AS</span> <span class="text-amber-300">mes</span>,</p>
                 <p class="pl-4"><span class="text-sky-400">SUM</span>(<span class="text-emerald-300">o.quantity * p.price</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">revenue</span>,</p>
@@ -255,7 +255,7 @@
                     <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">LEFT JOIN</code>: todas las filas de la izquierda, aunque no haya match</span></li>
                     <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm">Ejemplo: cruzar tabla de clientes con tabla de transacciones</span></li>
                 </ul>
-                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                <div class="bg-slate-900 text-slate-300 rounded-xl p-5 font-mono text-sm">
                     <p class="text-slate-500 text-xs mb-3">-- Clientes con sus órdenes</p>
                     <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">c.name</span>, <span class="text-sky-400">COUNT</span>(<span class="text-emerald-300">o.id</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">total_ordenes</span>,</p>
                     <p class="pl-4"><span class="text-sky-400">SUM</span>(<span class="text-emerald-300">o.quantity * p.price</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">total_gastado</span></p>
@@ -345,7 +345,7 @@
             </div>
         </div>
         <!-- Nomenclatura -->
-        <div class="mt-6 p-4 bg-slate-900 rounded-xl font-mono text-sm">
+        <div class="mt-6 p-4 bg-slate-900 text-slate-300 rounded-xl font-mono text-sm">
             <p class="text-slate-400 text-xs mb-3">-- Así se referencia una tabla en BigQuery</p>
             <p><span class="text-amber-300">`proyecto`</span><span class="text-slate-400">.</span><span class="text-sky-400">`dataset`</span><span class="text-slate-400">.</span><span class="text-emerald-300">`tabla`</span></p>
             <p class="text-slate-500 text-xs mt-3">Ejemplo real:</p>
@@ -372,7 +372,7 @@
                 <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Guardar y organizar queries para reutilizar</span></li>
             </ul>
             <!-- Mockup del editor -->
-            <div class="bg-slate-900 rounded-xl overflow-hidden text-xs font-mono">
+            <div class="bg-slate-900 text-slate-300 rounded-xl overflow-hidden text-xs font-mono">
                 <div class="flex items-center gap-1.5 px-4 py-2.5 bg-slate-800 border-b border-slate-700">
                     <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
                     <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
@@ -407,7 +407,7 @@
     <!-- Schema viewer mockup -->
     <div class="card p-6 scroll-reveal">
         <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-5 text-center">Schema de una tabla — cómo se ve en BigQuery</p>
-        <div class="bg-slate-900 rounded-xl overflow-hidden font-mono text-xs">
+        <div class="bg-slate-900 text-slate-300 rounded-xl overflow-hidden font-mono text-xs">
             <div class="flex items-center gap-2 px-4 py-2.5 bg-slate-800 border-b border-slate-700">
                 <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M3 6h18M3 18h18"/></svg>
                 <span class="text-slate-400 text-[10px]">workshop_dataset.test_orders · Schema</span>
@@ -476,7 +476,7 @@
                         <details>
                             <summary>Ver solución</summary>
                             <div class="solution-code">
-                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                <div class="bg-slate-900 text-slate-300 rounded-xl p-4 font-mono text-sm">
                                     <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name</span>, <span class="text-emerald-300">email</span></p>
                                     <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_customers`</span></p>
                                 </div>
@@ -497,7 +497,7 @@
                         <details>
                             <summary>Ver solución</summary>
                             <div class="solution-code">
-                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                <div class="bg-slate-900 text-slate-300 rounded-xl p-4 font-mono text-sm">
                                     <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name</span>, <span class="text-emerald-300">price</span></p>
                                     <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_products`</span></p>
                                     <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">price</span> &gt; <span class="text-rose-300">50</span></p>
@@ -520,7 +520,7 @@
                         <details>
                             <summary>Ver solución</summary>
                             <div class="solution-code">
-                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                <div class="bg-slate-900 text-slate-300 rounded-xl p-4 font-mono text-sm">
                                     <p><span class="text-sky-400">SELECT</span> <span class="text-sky-400">COUNT</span>(*)</p>
                                     <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
                                     <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">status</span> = <span class="text-rose-300">"pending"</span></p>
@@ -542,7 +542,7 @@
                         <details>
                             <summary>Ver solución</summary>
                             <div class="solution-code">
-                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                <div class="bg-slate-900 text-slate-300 rounded-xl p-4 font-mono text-sm">
                                     <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">id</span>, <span class="text-emerald-300">product_id</span>, <span class="text-emerald-300">status</span></p>
                                     <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
                                     <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">status</span> = <span class="text-rose-300">"pending"</span></p>
@@ -573,7 +573,7 @@
                         <details>
                             <summary>Ver solución</summary>
                             <div class="solution-code">
-                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                <div class="bg-slate-900 text-slate-300 rounded-xl p-4 font-mono text-sm">
                                     <p><span class="text-sky-400">SELECT</span></p>
                                     <p class="pl-2"><span class="text-sky-400">COUNT</span>(<span class="text-emerald-300">name</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">name</span>,</p>
                                     <p class="pl-2"><span class="text-emerald-300">country</span></p>
@@ -597,7 +597,7 @@
                         <details>
                             <summary>Ver solución</summary>
                             <div class="solution-code">
-                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                <div class="bg-slate-900 text-slate-300 rounded-xl p-4 font-mono text-sm">
                                     <p><span class="text-sky-400">SELECT</span></p>
                                     <p class="pl-2"><span class="text-sky-400">AVG</span>(<span class="text-emerald-300">price</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">precio_promedio</span>,</p>
                                     <p class="pl-2"><span class="text-emerald-300">category</span></p>
@@ -621,7 +621,7 @@
                         <details>
                             <summary>Ver solución</summary>
                             <div class="solution-code">
-                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                <div class="bg-slate-900 text-slate-300 rounded-xl p-4 font-mono text-sm">
                                     <p><span class="text-sky-400">SELECT</span></p>
                                     <p class="pl-2"><span class="text-sky-400">COUNT</span>(<span class="text-emerald-300">id</span>),</p>
                                     <p class="pl-2"><span class="text-emerald-300">status</span></p>
@@ -654,7 +654,7 @@
                         <details>
                             <summary>Ver solución</summary>
                             <div class="solution-code">
-                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                <div class="bg-slate-900 text-slate-300 rounded-xl p-4 font-mono text-sm">
                                     <p><span class="text-sky-400">SELECT</span></p>
                                     <p class="pl-2"><span class="text-emerald-300">o.id</span>,</p>
                                     <p class="pl-2"><span class="text-emerald-300">p.name</span>,</p>
@@ -680,7 +680,7 @@
                         <details>
                             <summary>Ver solución</summary>
                             <div class="solution-code">
-                                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                                <div class="bg-slate-900 text-slate-300 rounded-xl p-4 font-mono text-sm">
                                     <p><span class="text-sky-400">SELECT</span></p>
                                     <p class="pl-2"><span class="text-emerald-300">o.id</span>,</p>
                                     <p class="pl-2"><span class="text-emerald-300">c.name</span>,</p>
@@ -712,7 +712,7 @@
                         <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Más flexible que una vista porque acepta parámetros dinámicos</span></li>
                     </ul>
                 </div>
-                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                <div class="bg-slate-900 text-slate-300 rounded-xl p-5 font-mono text-sm">
                     <p class="text-slate-500 text-xs mb-3">-- Table Function: órdenes por estado y período</p>
                     <p><span class="text-sky-400">CREATE OR REPLACE TABLE FUNCTION</span></p>
                     <p class="pl-2"><span class="text-amber-300">`workshop-495617.workshop_dataset.fn_orders`</span>(</p>
@@ -736,14 +736,14 @@
                 <div class="grid md:grid-cols-2 gap-3">
                     <div class="bg-white rounded-lg p-3 border border-violet-100">
                         <p class="text-xs font-semibold text-slate-700 mb-2">Llamarla directamente</p>
-                        <div class="bg-slate-900 rounded p-2 font-mono text-xs">
+                        <div class="bg-slate-900 text-slate-300 rounded p-2 font-mono text-xs">
                             <p><span class="text-sky-400">SELECT</span> * <span class="text-sky-400">FROM</span></p>
                             <p class="pl-2"><span class="text-amber-300">fn_orders</span>(<span class="text-rose-300">'2024-01-01'</span>, <span class="text-rose-300">'completed'</span>)</p>
                         </div>
                     </div>
                     <div class="bg-white rounded-lg p-3 border border-violet-100">
                         <p class="text-xs font-semibold text-slate-700 mb-2">Usarla en un reporte</p>
-                        <div class="bg-slate-900 rounded p-2 font-mono text-xs">
+                        <div class="bg-slate-900 text-slate-300 rounded p-2 font-mono text-xs">
                             <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">category</span>, <span class="text-sky-400">SUM</span>(<span class="text-emerald-300">revenue</span>)</p>
                             <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">fn_orders</span>(<span class="text-sky-400">CURRENT_DATE</span>() - 30, <span class="text-rose-300">'completed'</span>)</p>
                             <p><span class="text-sky-400">GROUP BY</span> <span class="text-emerald-300">category</span></p>
@@ -830,7 +830,7 @@
                         <li class="flex items-start gap-3"><span class="check-emerald mt-0.5">✓</span><span class="text-slate-600 text-sm">Ventaja clave: los datos se actualizan solos en el Sheet</span></li>
                     </ul>
                 </div>
-                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                <div class="bg-slate-900 text-slate-300 rounded-xl p-5 font-mono text-sm">
                     <p class="text-slate-500 text-xs mb-3">-- Crear tabla externa desde Google Sheets</p>
                     <p><span class="text-sky-400">CREATE OR REPLACE EXTERNAL TABLE</span></p>
                     <p class="pl-2"><span class="text-amber-300">`workshop-495617.workshop_dataset.ext_budgets`</span></p>
@@ -897,7 +897,7 @@
                     <span class="text-violet-600 font-semibold">👤 Vos:</span>
                     <p class="text-slate-700 mt-0.5">"Dame las ventas totales por región del último mes, solo las que superan $1000"</p>
                 </div>
-                <div class="bg-slate-900 px-3 py-2 font-mono">
+                <div class="bg-slate-900 text-slate-300 px-3 py-2 font-mono">
                     <p class="text-slate-400 text-[10px] mb-1">🤖 IA genera:</p>
                     <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">region</span>, <span class="text-sky-400">SUM</span>(<span class="text-emerald-300">monto</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">total</span></p>
                     <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`ventas.transacciones`</span></p>
