@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery & SQL con IA — Hike Ecosystem</title>
+    <meta name="description" content="Curso intensivo de BigQuery y SQL potenciado con IA.">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary:#5b21b6;--primary-light:#7c3aed;--secondary:#0ea5e9;--border:rgba(100,116,139,.14);--text-primary:#0f172a;--text-secondary:#475569;--text-muted:#94a3b8}
+        *{box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#f8fafc;color:var(--text-primary);overflow-x:hidden;scroll-behavior:smooth}
+        h1,h2,h3,h4{font-family:'Outfit',sans-serif}
+        .bg-main{background:radial-gradient(circle at 85% 5%,rgba(91,33,182,.055),transparent 40%),radial-gradient(circle at 5% 85%,rgba(14,165,233,.055),transparent 40%),#f8fafc}
+        .card{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04)}
+        .card-elevated{background:#fff;border:1px solid var(--border);border-radius:24px;box-shadow:0 4px 24px rgba(0,0,0,.07)}
+        .gradient-text{background:linear-gradient(135deg,#5b21b6,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .btn-primary{background:linear-gradient(135deg,#5b21b6,#0ea5e9);color:#fff;border:none;transition:all .3s;box-shadow:0 4px 20px rgba(91,33,182,.22);display:inline-block}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(91,33,182,.32)}
+        .tag{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+        .tag-violet{background:rgba(91,33,182,.09);color:#5b21b6;border:1px solid rgba(91,33,182,.16)}
+        .tag-sky{background:rgba(14,165,233,.09);color:#0284c7;border:1px solid rgba(14,165,233,.16)}
+        .tag-amber{background:rgba(245,158,11,.09);color:#b45309;border:1px solid rgba(245,158,11,.16)}
+        .tag-emerald{background:rgba(16,185,129,.09);color:#059669;border:1px solid rgba(16,185,129,.16)}
+        .tag-rose{background:rgba(239,68,68,.09);color:#dc2626;border:1px solid rgba(239,68,68,.14)}
+        .card-hover{transition:all .35s ease}
+        .card-hover:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.10);border-color:rgba(91,33,182,.22)}
+        .scroll-reveal{opacity:0;transform:translateY(28px);transition:all .75s cubic-bezier(.4,0,.2,1)}
+        .scroll-reveal.active{opacity:1;transform:translateY(0)}
+        .stagger-1{transition-delay:.08s}.stagger-2{transition-delay:.16s}.stagger-3{transition-delay:.24s}.stagger-4{transition-delay:.32s}
+        .hero-glow{position:absolute;top:20%;left:50%;transform:translate(-50%,-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(91,33,182,.06),transparent 65%);filter:blur(40px);z-index:0;pointer-events:none}
+        .stat-card{text-align:center;padding:2rem 1.5rem;background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.float-anim{animation:float 5s ease-in-out infinite}
+        .check-violet{color:#5b21b6}.check-sky{color:#0284c7}.check-emerald{color:#059669}
+        /* Sidebar */
+        #side-nav{position:fixed;left:24px;top:50%;transform:translateY(-50%);z-index:40;display:none;flex-direction:column;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);padding:18px 12px;border-radius:18px;border:1px solid rgba(255,255,255,.7);box-shadow:0 6px 28px rgba(15,23,42,.09);width:148px}
+        @media(min-width:1280px){#side-nav{display:flex}}
+        .snav-logo{width:22px;height:22px;object-fit:contain;margin:0 auto 12px;display:block;opacity:.75}
+        .snav-divider{width:100%;height:1px;background:rgba(100,116,139,.14);margin-bottom:8px}
+        .snav-item{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:10px;cursor:pointer;transition:background .2s}
+        .snav-item:hover{background:rgba(91,33,182,.06)}
+        .snav-dot{width:7px;height:7px;border-radius:50%;background:#cbd5e1;flex-shrink:0;transition:all .25s}
+        .snav-item:hover .snav-dot,.snav-item.active .snav-dot{background:#7c3aed}
+        .snav-item.active .snav-dot{width:8px;height:8px;box-shadow:0 0 0 3px rgba(91,33,182,.14)}
+        .snav-label{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;white-space:nowrap;transition:color .2s}
+        .snav-item:hover .snav-label{color:#5b21b6}
+        .snav-item.active .snav-label{color:#0f172a;font-weight:700}
+        .placeholder{background:repeating-linear-gradient(45deg,#f1f5f9,#f1f5f9 10px,#e2e8f0 10px,#e2e8f0 20px);border-radius:12px;padding:2rem;color:#94a3b8;font-size:.85rem;text-align:center;border:1.5px dashed #cbd5e1}
+        footer{background:linear-gradient(135deg,#0f172a,#1e1b4b);color:#fff}
+    </style>
+</head>
+<body class="bg-main">
+
+<div class="hero-glow"></div>
+
+<!-- ── Sidebar Nav ── -->
+<nav id="side-nav">
+    <img src="/public/hikelogo-violet.png" alt="Hike" class="snav-logo">
+    <div class="snav-divider"></div>
+    <div class="snav-item active" data-section="hero"><div class="snav-dot"></div><span class="snav-label">Inicio</span></div>
+    <div class="snav-item" data-section="sql-intro"><div class="snav-dot"></div><span class="snav-label">SQL Intro</span></div>
+    <div class="snav-item" data-section="ejercicios"><div class="snav-dot"></div><span class="snav-label">Ejercicios</span></div>
+    <div class="snav-item" data-section="bigquery-env"><div class="snav-dot"></div><span class="snav-label">BigQuery</span></div>
+    <div class="snav-item" data-section="practica"><div class="snav-dot"></div><span class="snav-label">Práctica</span></div>
+    <div class="snav-item" data-section="ia"><div class="snav-dot"></div><span class="snav-label">IA</span></div>
+    <div class="snav-item" data-section="resumen"><div class="snav-dot"></div><span class="snav-label">Resumen</span></div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<header id="hero" class="relative pt-44 pb-28 px-6 max-w-6xl mx-auto text-center z-10">
+    <div class="scroll-reveal active">
+        <span class="tag tag-violet mb-6 inline-block">Workshop Intensivo · 2 horas</span>
+        <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight text-slate-900">
+            BigQuery & SQL<br><span class="gradient-text">potenciado con IA</span>
+        </h1>
+        <p class="text-xl text-slate-500 max-w-3xl mx-auto mb-12 leading-relaxed">
+            De cero a automatización: aprendé a consultar, transformar y programar datos en <strong class="text-slate-800">Google Cloud</strong> — con inteligencia artificial en cada paso.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="#sql-intro" class="btn-primary px-8 py-4 rounded-xl font-bold">Ver el contenido →</a>
+            <a href="https://console.cloud.google.com/bigquery?project=workshop-495617&supportedpurview=project" target="_blank" rel="noopener" class="flex items-center gap-2 px-8 py-4 rounded-xl font-bold border-2 border-slate-200 bg-white text-slate-700 hover:border-violet-300 hover:text-violet-700 transition-all" style="text-decoration:none">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Abrir BigQuery Console
+            </a>
+        </div>
+    </div>
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mt-20 scroll-reveal stagger-2">
+        <div class="stat-card float-anim"><div class="text-4xl font-extrabold gradient-text mb-2">3</div><div class="text-sm font-semibold text-slate-600">Módulos</div><div class="text-xs text-slate-400">Progresivos</div></div>
+        <div class="stat-card float-anim" style="animation-delay:.4s"><div class="text-4xl font-extrabold gradient-text mb-2">2h</div><div class="text-sm font-semibold text-slate-600">Duración</div><div class="text-xs text-slate-400">Hands-on</div></div>
+        <div class="stat-card float-anim" style="animation-delay:.8s"><div class="text-4xl font-extrabold gradient-text mb-2">Live</div><div class="text-sm font-semibold text-slate-600">Demo en vivo</div><div class="text-xs text-slate-400">Con datos reales</div></div>
+        <div class="stat-card float-anim" style="animation-delay:1.2s"><div class="text-4xl font-extrabold gradient-text mb-2">IA</div><div class="text-sm font-semibold text-slate-600">Asistida</div><div class="text-xs text-slate-400">En todo el proceso</div></div>
+    </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     MÓDULO 1 — INTRO SQL
+══════════════════════════════════════ -->
+<section id="sql-intro" class="py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-6 md:px-10">
+        <div class="text-center mb-16 scroll-reveal">
+            <span class="tag tag-violet mb-4 inline-block">Módulo 1</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-slate-900">Introducción a SQL</h2>
+            <p class="text-slate-500 max-w-2xl mx-auto">El lenguaje universal de los datos. Desde cero hasta escribir tus propias consultas.</p>
+        </div>
+        <!-- Intro contextual -->
+        <div class="card p-6 mb-10 scroll-reveal" style="border-left:4px solid #7c3aed;background:rgba(91,33,182,.03)">
+            <p class="text-slate-700 text-sm leading-relaxed"><strong>¿Por qué SQL?</strong> SQL existe desde los años 70 y sigue siendo el estándar para trabajar con datos estructurados. Toda herramienta de datos —BigQuery, Snowflake, Postgres, Excel Power Query— entiende SQL. Aprender SQL es aprender a hablar el idioma de los datos.</p>
+        </div>
+
+        <div class="card-elevated p-8 md:p-12 mb-8 scroll-reveal">
+            <!-- Bloque A: Lenguaje básico -->
+            <div class="flex items-center gap-3 mb-6">
+                <span class="tag tag-violet">A</span>
+                <h3 class="text-xl font-extrabold text-slate-900">El lenguaje básico</h3>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Qué es SQL y por qué es el lenguaje de los datos</span></li>
+                    <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Estructura de una query: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">SELECT</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">FROM</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">WHERE</code></span></li>
+                    <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Tipos de datos: strings, números, fechas, booleanos</span></li>
+                    <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Cómo leer e interpretar el resultado de una consulta</span></li>
+                </ul>
+                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                    <p class="text-slate-500 text-xs mb-3">-- Mi primera query sobre clientes reales</p>
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name, country, signup_date</span></p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_customers`</span></p>
+                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">signup_date</span> <span class="text-white">&gt;=</span> <span class="text-rose-300">'2024-01-01'</span></p>
+                </div>
+            </div>
+            <!-- Tip -->
+            <div class="mt-6 p-4 rounded-xl bg-amber-50 border border-amber-100 flex items-start gap-3">
+                <span class="text-amber-500 text-lg flex-shrink-0">💡</span>
+                <p class="text-slate-600 text-xs leading-relaxed"><strong>Regla de oro:</strong> Una query SQL se lee de adentro hacia afuera. Primero <code class="font-mono">FROM</code> (de dónde vengo), después <code class="font-mono">WHERE</code> (qué filtro), y por último <code class="font-mono">SELECT</code> (qué muestro). El orden en que <em>escribís</em> no es el orden en que <em>se ejecuta</em>.</p>
+            </div>
+        </div>
+
+        <div class="card-elevated p-8 md:p-12 mb-8 scroll-reveal">
+            <!-- Bloque B: Filtrar y agrupar -->
+            <div class="flex items-center gap-3 mb-6">
+                <span class="tag tag-sky">B</span>
+                <h3 class="text-xl font-extrabold text-slate-900">Filtrar y agrupar datos</h3>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3"><span class="check-sky mt-0.5">✓</span><span class="text-slate-600 text-sm">Filtrar filas con <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">WHERE</code>: operadores <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">=</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">AND</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">IN</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">BETWEEN</code></span></li>
+                    <li class="flex items-start gap-3"><span class="check-sky mt-0.5">✓</span><span class="text-slate-600 text-sm">Agrupar con <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">GROUP BY</code> y funciones de agregación: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">SUM</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">COUNT</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">AVG</code></span></li>
+                    <li class="flex items-start gap-3"><span class="check-sky mt-0.5">✓</span><span class="text-slate-600 text-sm">Ordenar resultados con <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">ORDER BY</code></span></li>
+                    <li class="flex items-start gap-3"><span class="check-sky mt-0.5">✓</span><span class="text-slate-600 text-sm"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">HAVING</code> vs <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">WHERE</code>: cuándo usar cada uno</span></li>
+                </ul>
+                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                    <p class="text-slate-500 text-xs mb-3">-- Órdenes por categoría de producto</p>
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">p.category</span>, <span class="text-sky-400">COUNT</span>(*) <span class="text-sky-400">AS</span> <span class="text-amber-300">total_ordenes</span>,</p>
+                    <p class="pl-4"><span class="text-sky-400">SUM</span>(<span class="text-emerald-300">o.quantity * p.price</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">revenue</span></p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop_dataset.test_orders`</span> <span class="text-emerald-300">o</span></p>
+                    <p><span class="text-sky-400">JOIN</span> <span class="text-amber-300">`workshop_dataset.test_products`</span> <span class="text-emerald-300">p</span></p>
+                    <p class="pl-4"><span class="text-sky-400">ON</span> <span class="text-emerald-300">o.product_id = p.id</span></p>
+                    <p><span class="text-sky-400">GROUP BY</span> <span class="text-emerald-300">p.category</span></p>
+                    <p><span class="text-sky-400">ORDER BY</span> <span class="text-amber-300">revenue</span> <span class="text-sky-400">DESC</span></p>
+                </div>
+            </div>
+            <!-- HAVING vs WHERE tip -->
+            <div class="mt-6 p-4 rounded-xl bg-sky-50 border border-sky-100">
+                <p class="text-xs font-bold text-sky-700 mb-2">WHERE vs HAVING — ¿cuál usar?</p>
+                <div class="grid md:grid-cols-2 gap-3">
+                    <div class="bg-white rounded-lg p-3 border border-sky-100">
+                        <p class="text-xs font-semibold text-slate-700 mb-1">WHERE</p>
+                        <p class="text-xs text-slate-500">Filtra <strong>filas individuales</strong> antes de agrupar. Trabaja sobre datos crudos.</p>
+                        <p class="font-mono text-xs text-slate-600 mt-2">WHERE monto &gt; 100</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-3 border border-sky-100">
+                        <p class="text-xs font-semibold text-slate-700 mb-1">HAVING</p>
+                        <p class="text-xs text-slate-500">Filtra <strong>grupos</strong> después de agrupar. Trabaja sobre el resultado del GROUP BY.</p>
+                        <p class="font-mono text-xs text-slate-600 mt-2">HAVING SUM(monto) &gt; 1000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-elevated p-8 md:p-12 mb-8 scroll-reveal">
+            <!-- Bloque C: Dimensiones vs Métricas -->
+            <div class="flex items-center gap-3 mb-6">
+                <span class="tag tag-emerald">C</span>
+                <h3 class="text-xl font-extrabold text-slate-900">Dimensiones vs. Métricas</h3>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="tag tag-emerald">Dimensiones</span>
+                    </div>
+                    <p class="text-slate-500 text-sm mb-3">Categorías que <strong class="text-slate-700">describen</strong> los datos. No se suman.</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-emerald">→</span> País, ciudad, canal</li>
+                        <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-emerald">→</span> Categoría de producto</li>
+                        <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-emerald">→</span> Fecha, mes, semana</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="tag tag-violet">Métricas</span>
+                    </div>
+                    <p class="text-slate-500 text-sm mb-3">Valores numéricos que <strong class="text-slate-700">se miden y agregan</strong>.</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-violet">→</span> Ventas, ingresos, costo</li>
+                        <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-violet">→</span> Cantidad de unidades</li>
+                        <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-violet">→</span> Clics, conversiones, CTR</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Ejemplo reporte -->
+            <div class="mt-6 p-4 rounded-xl bg-slate-900 font-mono text-sm">
+                <p class="text-slate-500 text-xs mb-3">-- Reporte: revenue por categoría y mes</p>
+                <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">p.category</span>, <span class="text-emerald-300">DATE_TRUNC(o.order_date, MONTH)</span> <span class="text-sky-400">AS</span> <span class="text-amber-300">mes</span>,</p>
+                <p class="pl-4"><span class="text-sky-400">SUM</span>(<span class="text-emerald-300">o.quantity * p.price</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">revenue</span>,</p>
+                <p class="pl-4"><span class="text-sky-400">COUNT</span>(<span class="text-sky-400">DISTINCT</span> <span class="text-emerald-300">o.customer_id</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">clientes_unicos</span></p>
+                <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop_dataset.test_orders`</span> <span class="text-emerald-300">o</span></p>
+                <p><span class="text-sky-400">JOIN</span> <span class="text-amber-300">`workshop_dataset.test_products`</span> <span class="text-emerald-300">p</span> <span class="text-sky-400">ON</span> <span class="text-emerald-300">o.product_id = p.id</span></p>
+                <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">o.status</span> = <span class="text-rose-300">'completed'</span></p>
+                <p><span class="text-sky-400">GROUP BY</span> <span class="text-sky-400">1, 2</span></p>
+                <p><span class="text-sky-400">ORDER BY</span> <span class="text-amber-300">mes</span> <span class="text-sky-400">DESC</span></p>
+            </div>
+        </div>
+
+        <div class="card-elevated p-8 md:p-12 scroll-reveal">
+            <!-- Bloque D: JOINs -->
+            <div class="flex items-center gap-3 mb-6">
+                <span class="tag tag-amber">D</span>
+                <h3 class="text-xl font-extrabold text-slate-900">Joins: combinar tablas</h3>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm">Qué es un JOIN: combinar dos tablas por una clave en común</span></li>
+                    <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">INNER JOIN</code>: solo las filas que coinciden en ambas tablas</span></li>
+                    <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">LEFT JOIN</code>: todas las filas de la izquierda, aunque no haya match</span></li>
+                    <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm">Ejemplo: cruzar tabla de clientes con tabla de transacciones</span></li>
+                </ul>
+                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                    <p class="text-slate-500 text-xs mb-3">-- Clientes con sus órdenes</p>
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">c.name</span>, <span class="text-sky-400">COUNT</span>(<span class="text-emerald-300">o.id</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">total_ordenes</span>,</p>
+                    <p class="pl-4"><span class="text-sky-400">SUM</span>(<span class="text-emerald-300">o.quantity * p.price</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">total_gastado</span></p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop_dataset.test_customers`</span> <span class="text-emerald-300">c</span></p>
+                    <p><span class="text-sky-400">LEFT JOIN</span> <span class="text-amber-300">`workshop_dataset.test_orders`</span> <span class="text-emerald-300">o</span></p>
+                    <p class="pl-4"><span class="text-sky-400">ON</span> <span class="text-emerald-300">c.id = o.customer_id</span></p>
+                    <p><span class="text-sky-400">LEFT JOIN</span> <span class="text-amber-300">`workshop_dataset.test_products`</span> <span class="text-emerald-300">p</span></p>
+                    <p class="pl-4"><span class="text-sky-400">ON</span> <span class="text-emerald-300">o.product_id = p.id</span></p>
+                    <p><span class="text-sky-400">GROUP BY</span> <span class="text-emerald-300">c.name</span></p>
+                </div>
+            </div>
+            <!-- Diagrama visual de JOIN -->
+            <div class="mt-6 grid grid-cols-3 gap-2 text-center text-xs">
+                <div class="p-3 bg-violet-50 border border-violet-100 rounded-xl">
+                    <div class="font-bold text-violet-700 mb-2">test_customers</div>
+                    <div class="space-y-1 text-slate-500">
+                        <div class="bg-white rounded px-2 py-0.5">id=C001 · Alice</div>
+                        <div class="bg-white rounded px-2 py-0.5">id=C002 · Bob</div>
+                        <div class="bg-white rounded px-2 py-0.5">id=C003 · Carol</div>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center justify-center gap-1">
+                    <div class="text-slate-400 text-[10px]">LEFT JOIN</div>
+                    <div class="font-mono text-[10px] text-violet-600">c.id = o.customer_id</div>
+                    <div class="text-xl text-slate-300">→</div>
+                </div>
+                <div class="p-3 bg-sky-50 border border-sky-100 rounded-xl">
+                    <div class="font-bold text-sky-700 mb-2">test_orders</div>
+                    <div class="space-y-1 text-slate-500">
+                        <div class="bg-white rounded px-2 py-0.5">customer_id=C001 · qty:2</div>
+                        <div class="bg-white rounded px-2 py-0.5">customer_id=C001 · qty:1</div>
+                        <div class="bg-white rounded px-2 py-0.5">customer_id=C002 · qty:3</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-xs text-slate-600">
+                <strong class="text-emerald-700">Resultado:</strong> Ana → $80 · Luis → $80 · Marta → NULL (no tiene compras, pero aparece por el LEFT JOIN)
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     EJERCICIOS — NIVEL 1
+══════════════════════════════════════ -->
+<section id="ejercicios" class="py-24 bg-slate-50">
+    <div class="max-w-6xl mx-auto px-6 md:px-10">
+        <div class="text-center mb-16 scroll-reveal">
+            <span class="tag tag-violet mb-4 inline-block">Práctica guiada</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-slate-900">Ejercicios SQL — Nivel 1</h2>
+            <p class="text-slate-500 max-w-2xl mx-auto">Queries reales sobre las tablas del workshop. Copiá cada una en el editor de BigQuery y ejecutala.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Ejercicio 1 -->
+            <div class="card p-6 scroll-reveal stagger-1">
+                <div class="flex items-start gap-3 mb-4">
+                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-xs font-extrabold flex items-center justify-center">1</span>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Mostrar nombre y mail de todos los clientes</p>
+                        <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_customers</code></p>
+                    </div>
+                </div>
+                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name</span>, <span class="text-emerald-300">email</span></p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_customers`</span></p>
+                </div>
+                <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
+                    <span class="text-emerald-500">&#9654;</span> Prueba: agregá <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">country</code> al SELECT
+                </div>
+            </div>
+            <!-- Ejercicio 2 -->
+            <div class="card p-6 scroll-reveal stagger-2">
+                <div class="flex items-start gap-3 mb-4">
+                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-xs font-extrabold flex items-center justify-center">2</span>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Productos que cuesten más de $50, ordenados por precio</p>
+                        <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_products</code> · Filtro + orden</p>
+                    </div>
+                </div>
+                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">name</span>, <span class="text-emerald-300">price</span></p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_products`</span></p>
+                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">price</span> &gt; <span class="text-rose-300">50</span></p>
+                    <p><span class="text-sky-400">ORDER BY</span> <span class="text-emerald-300">price</span> <span class="text-sky-400">DESC</span></p>
+                </div>
+                <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
+                    <span class="text-emerald-500">&#9654;</span> Prueba: cambiá <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">DESC</code> por <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">ASC</code>
+                </div>
+            </div>
+            <!-- Ejercicio 3 -->
+            <div class="card p-6 scroll-reveal stagger-3">
+                <div class="flex items-start gap-3 mb-4">
+                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-xs font-extrabold flex items-center justify-center">3</span>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">¿Cuántas órdenes tienen estado <code class="font-mono bg-slate-100 px-1 rounded text-xs">pending</code>?</p>
+                        <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_orders</code> · COUNT + WHERE</p>
+                    </div>
+                </div>
+                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-sky-400">COUNT</span>(*)</p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
+                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">status</span> = <span class="text-rose-300">'pending'</span></p>
+                </div>
+                <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
+                    <span class="text-emerald-500">&#9654;</span> Prueba: reemplazá <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">'pending'</code> por <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">'completed'</code>
+                </div>
+            </div>
+            <!-- Ejercicio 4 -->
+            <div class="card p-6 scroll-reveal stagger-4">
+                <div class="flex items-start gap-3 mb-4">
+                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-xs font-extrabold flex items-center justify-center">4</span>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">¿Y la lista de esas órdenes pendientes?</p>
+                        <p class="text-slate-400 text-xs mt-0.5">Tabla: <code class="font-mono">test_orders</code> · SELECT columnas específicas</p>
+                    </div>
+                </div>
+                <div class="bg-slate-900 rounded-xl p-4 font-mono text-sm">
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">id</span>, <span class="text-emerald-300">product_id</span>, <span class="text-emerald-300">status</span></p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
+                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">status</span> = <span class="text-rose-300">'pending'</span></p>
+                </div>
+                <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
+                    <span class="text-emerald-500">&#9654;</span> Prueba: agregá <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">order_date</code> al SELECT
+                </div>
+            </div>
+        </div>
+        <!-- Tip -->
+        <div class="mt-8 p-5 card scroll-reveal" style="border-left:4px solid #7c3aed">
+            <div class="flex items-start gap-3">
+                <span class="text-violet-500 text-lg flex-shrink-0">💡</span>
+                <div>
+                    <p class="font-bold text-slate-800 text-sm mb-1">Tip: cada query tiene un propósito</p>
+                    <p class="text-slate-500 text-xs leading-relaxed">El ejercicio 3 te dice <em>cuántos</em> hay. El ejercicio 4 te muestra <em>cuáles</em> son. En análisis de datos siempre arrancás con el conteo y después profundizás con el detalle.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     MÓDULO 2 — ENTORNO BIGQUERY
+══════════════════════════════════════ -->
+<section id="bigquery-env" class="py-24 px-6 md:px-10 max-w-6xl mx-auto">
+    <div class="text-center mb-16 scroll-reveal">
+        <span class="tag tag-sky mb-4 inline-block">Módulo 2</span>
+        <h2 class="text-4xl md:text-5xl font-bold mb-4 text-slate-900">El entorno de BigQuery</h2>
+        <p class="text-slate-500 max-w-2xl mx-auto">Conocé la plataforma de datos de Google Cloud: datasets, tablas, rutinas y el editor SQL.</p>
+    </div>
+
+    <!-- Intro contextual M2 -->
+    <div class="card p-6 mb-10 scroll-reveal" style="border-left:4px solid #0284c7;background:rgba(14,165,233,.03)">
+        <p class="text-slate-700 text-sm leading-relaxed"><strong>¿Qué es BigQuery?</strong> Es el data warehouse de Google Cloud. Está diseñado para analizar terabytes de datos en segundos, sin servidores que administrar. A diferencia de una base de datos tradicional, BigQuery no es transaccional — está optimizado para leer y analizar grandes volúmenes, no para escribir fila por fila.</p>
+    </div>
+
+    <!-- Conceptos clave -->
+    <div class="card-elevated p-8 md:p-12 mb-8 scroll-reveal">
+        <div class="flex items-center gap-3 mb-6">
+            <span class="tag tag-sky">A</span>
+            <h3 class="text-xl font-extrabold text-slate-900">Proyectos, Datasets y Tablas</h3>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="card p-5 card-hover">
+                <div class="w-8 h-8 rounded-lg bg-sky-50 border border-sky-100 flex items-center justify-center mb-3"><svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg></div>
+                <h4 class="font-bold text-slate-800 mb-2 text-sm">Proyecto</h4>
+                <p class="text-slate-500 text-xs leading-relaxed">El nivel más alto. Agrupa todos los recursos y se asocia a una cuenta de facturación de GCP.</p>
+            </div>
+            <div class="card p-5 card-hover" style="border-color:rgba(14,165,233,.25)">
+                <div class="w-8 h-8 rounded-lg bg-sky-100 border border-sky-200 flex items-center justify-center mb-3"><svg class="w-4 h-4 text-sky-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg></div>
+                <h4 class="font-bold text-slate-800 mb-2 text-sm">Dataset</h4>
+                <p class="text-slate-500 text-xs leading-relaxed">Contenedor de tablas. Funciona como una carpeta o base de datos. Tiene región y permisos propios.</p>
+            </div>
+            <div class="card p-5 card-hover">
+                <div class="w-8 h-8 rounded-lg bg-violet-50 border border-violet-100 flex items-center justify-center mb-3"><svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M3 6h18M3 18h18"/></svg></div>
+                <h4 class="font-bold text-slate-800 mb-2 text-sm">Tabla / Vista / Rutina</h4>
+                <p class="text-slate-500 text-xs leading-relaxed">Donde viven los datos. Las <strong>vistas</strong> son queries guardadas. Las <strong>rutinas</strong> son funciones o procedimientos reutilizables.</p>
+            </div>
+        </div>
+        <!-- Nomenclatura -->
+        <div class="mt-6 p-4 bg-slate-900 rounded-xl font-mono text-sm">
+            <p class="text-slate-400 text-xs mb-3">-- Así se referencia una tabla en BigQuery</p>
+            <p><span class="text-amber-300">`proyecto`</span><span class="text-slate-400">.</span><span class="text-sky-400">`dataset`</span><span class="text-slate-400">.</span><span class="text-emerald-300">`tabla`</span></p>
+            <p class="text-slate-500 text-xs mt-3">Ejemplo real:</p>
+            <p><span class="text-amber-300">`mi-empresa-prod`</span><span class="text-slate-400">.</span><span class="text-sky-400">`ventas`</span><span class="text-slate-400">.</span><span class="text-emerald-300">`transacciones_2024`</span></p>
+        </div>
+        <div class="mt-4 p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
+            <span class="text-amber-500 flex-shrink-0">💡</span>
+            <p class="text-slate-600 text-xs leading-relaxed"><strong>Tip de nomenclatura:</strong> Usá guiones medios en el nombre del proyecto (impuesto por GCP) y guiones bajos en datasets y tablas. Evitá mayúsculas y caracteres especiales.</p>
+        </div>
+    </div>
+
+    <!-- Editor SQL -->
+    <div class="card-elevated p-8 md:p-12 mb-8 scroll-reveal">
+        <div class="flex items-center gap-3 mb-6">
+            <span class="tag tag-violet">B</span>
+            <h3 class="text-xl font-extrabold text-slate-900">El editor de SQL</h3>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+            <ul class="space-y-3">
+                <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Navegación del panel lateral: proyectos, datasets y tablas</span></li>
+                <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Escribir y ejecutar una query desde el editor</span></li>
+                <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Explorar schemas: ver columnas y tipos de datos de una tabla</span></li>
+                <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Previsualizar datos con <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">Preview</code> sin ejecutar queries</span></li>
+                <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Guardar y organizar queries para reutilizar</span></li>
+            </ul>
+            <!-- Mockup del editor -->
+            <div class="bg-slate-900 rounded-xl overflow-hidden text-xs font-mono">
+                <div class="flex items-center gap-1.5 px-4 py-2.5 bg-slate-800 border-b border-slate-700">
+                    <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+                    <span class="ml-2 text-slate-400 text-[10px]">BigQuery Studio — Editor</span>
+                </div>
+                <div class="p-4 space-y-1">
+                    <p class="text-slate-500">-- Órdenes completadas de hoy</p>
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">status</span>, <span class="text-sky-400">COUNT</span>(*) <span class="text-sky-400">AS</span> <span class="text-amber-300">total</span>,</p>
+                    <p class="pl-4"><span class="text-sky-400">SUM</span>(<span class="text-emerald-300">quantity</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">items_vendidos</span></p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
+                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">order_date</span> <span class="text-white">=</span> <span class="text-sky-400">CURRENT_DATE</span>()</p>
+                    <p><span class="text-sky-400">GROUP BY</span> <span class="text-emerald-300">status</span></p>
+                    <div class="mt-3 pt-3 border-t border-slate-700 flex items-center gap-2">
+                        <span class="text-emerald-400">▶</span>
+                        <span class="text-slate-400 text-[10px]">Ejecutar · 3 filas · 0.4s · 0 MB procesados</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Shortcuts tip -->
+        <div class="mt-6 p-4 bg-violet-50 border border-violet-100 rounded-xl">
+            <p class="text-xs font-bold text-violet-700 mb-3">⌨️ Atajos útiles en el editor</p>
+            <div class="grid md:grid-cols-3 gap-3">
+                <div class="flex items-center gap-2"><code class="bg-white border border-violet-100 rounded px-2 py-0.5 text-xs font-mono text-violet-700">Ctrl + Enter</code><span class="text-slate-500 text-xs">Ejecutar query</span></div>
+                <div class="flex items-center gap-2"><code class="bg-white border border-violet-100 rounded px-2 py-0.5 text-xs font-mono text-violet-700">Ctrl + /</code><span class="text-slate-500 text-xs">Comentar línea</span></div>
+                <div class="flex items-center gap-2"><code class="bg-white border border-violet-100 rounded px-2 py-0.5 text-xs font-mono text-violet-700">Ctrl + Shift + F</code><span class="text-slate-500 text-xs">Formatear SQL</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schema viewer mockup -->
+    <div class="card p-6 scroll-reveal">
+        <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-5 text-center">Schema de una tabla — cómo se ve en BigQuery</p>
+        <div class="bg-slate-900 rounded-xl overflow-hidden font-mono text-xs">
+            <div class="flex items-center gap-2 px-4 py-2.5 bg-slate-800 border-b border-slate-700">
+                <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M3 6h18M3 18h18"/></svg>
+                <span class="text-slate-400 text-[10px]">workshop_dataset.test_orders · Schema</span>
+            </div>
+            <div class="p-4">
+                <div class="grid grid-cols-3 gap-2 text-[10px] text-slate-500 mb-2 border-b border-slate-700 pb-2">
+                    <span>Campo</span><span>Tipo</span><span>Descripción</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="grid grid-cols-3 gap-2 text-[11px]"><span class="text-emerald-300">id</span><span class="text-sky-400">INTEGER</span><span class="text-slate-500">ID de la orden</span></div>
+                    <div class="grid grid-cols-3 gap-2 text-[11px]"><span class="text-emerald-300">customer_id</span><span class="text-sky-400">INTEGER</span><span class="text-slate-500">FK → test_customers.id</span></div>
+                    <div class="grid grid-cols-3 gap-2 text-[11px]"><span class="text-emerald-300">product_id</span><span class="text-sky-400">INTEGER</span><span class="text-slate-500">FK → test_products.id</span></div>
+                    <div class="grid grid-cols-3 gap-2 text-[11px]"><span class="text-emerald-300">quantity</span><span class="text-sky-400">INTEGER</span><span class="text-slate-500">Cantidad de unidades</span></div>
+                    <div class="grid grid-cols-3 gap-2 text-[11px]"><span class="text-emerald-300">order_date</span><span class="text-sky-400">DATE</span><span class="text-slate-500">Fecha de la orden</span></div>
+                    <div class="grid grid-cols-3 gap-2 text-[11px]"><span class="text-emerald-300">status</span><span class="text-sky-400">STRING</span><span class="text-slate-500">pending / completed / cancelled</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 p-3 bg-sky-50 border border-sky-100 rounded-xl flex items-start gap-3">
+            <span class="text-sky-500 flex-shrink-0">💡</span>
+            <p class="text-slate-600 text-xs leading-relaxed"><strong>Antes de escribir una query</strong>, siempre revisá el schema de la tabla. Conocer los nombres exactos de columnas y sus tipos evita el 80% de los errores.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     MÓDULO 3 — PRÁCTICA
+══════════════════════════════════════ -->
+<section id="practica" class="py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-6 md:px-10">
+        <div class="text-center mb-16 scroll-reveal">
+            <span class="tag tag-emerald mb-4 inline-block">Módulo 3</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-slate-900">Práctica con tablas reales</h2>
+            <p class="text-slate-500 max-w-2xl mx-auto">Manos a la obra: creamos tablas, armamos rutinas y dejamos queries corriendo solas.</p>
+        </div>
+        <!-- Intro contextual M3 -->
+        <div class="card p-6 mb-10 scroll-reveal" style="border-left:4px solid #059669;background:rgba(16,185,129,.03)">
+            <p class="text-slate-700 text-sm leading-relaxed"><strong>¿Por qué esto importa?</strong> Saber escribir una query es el primer paso. El segundo es conectar datos reales, automatizar su procesamiento y no depender de exports manuales. En este módulo pasamos de consultar datos a <em>construir una pipeline</em> que corra sola todos los días.</p>
+        </div>
+
+        <!-- Bloque A: Table Function -->
+        <div class="card-elevated p-8 md:p-12 mb-8 scroll-reveal">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="tag tag-violet">A</span>
+                <h3 class="text-xl font-extrabold text-slate-900">Crear una Table Function</h3>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-slate-500 text-sm mb-4">Una <strong>Table Function</strong> es una rutina que recibe parámetros y devuelve una tabla. Permite encapsular lógica de consulta reutilizable — la llamás como si fuera una tabla en cualquier FROM.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Definir parámetros de entrada: fecha inicio, estado</span></li>
+                        <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">La función devuelve un resultado tipo tabla que podés consultar</span></li>
+                        <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Reutilizable: usala en dashboards, otras queries, o scheduled queries</span></li>
+                        <li class="flex items-start gap-3"><span class="check-violet mt-0.5">✓</span><span class="text-slate-600 text-sm">Más flexible que una vista porque acepta parámetros dinámicos</span></li>
+                    </ul>
+                </div>
+                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                    <p class="text-slate-500 text-xs mb-3">-- Table Function: órdenes por estado y período</p>
+                    <p><span class="text-sky-400">CREATE OR REPLACE TABLE FUNCTION</span></p>
+                    <p class="pl-2"><span class="text-amber-300">`workshop-495617.workshop_dataset.fn_orders`</span>(</p>
+                    <p class="pl-4"><span class="text-emerald-300">start_date DATE</span>,</p>
+                    <p class="pl-4"><span class="text-emerald-300">order_status STRING</span>)</p>
+                    <p><span class="text-sky-400">AS</span> (</p>
+                    <p class="pl-2"><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">o.id</span>, <span class="text-emerald-300">c.name</span>, <span class="text-emerald-300">p.category</span>,</p>
+                    <p class="pl-6"><span class="text-emerald-300">o.quantity * p.price</span> <span class="text-sky-400">AS</span> <span class="text-amber-300">revenue</span>,</p>
+                    <p class="pl-6"><span class="text-emerald-300">o.order_date</span>, <span class="text-emerald-300">o.status</span></p>
+                    <p class="pl-2"><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop_dataset.test_orders`</span> <span class="text-emerald-300">o</span></p>
+                    <p class="pl-2"><span class="text-sky-400">JOIN</span> <span class="text-amber-300">`workshop_dataset.test_customers`</span> <span class="text-emerald-300">c</span> <span class="text-sky-400">ON</span> <span class="text-emerald-300">o.customer_id = c.id</span></p>
+                    <p class="pl-2"><span class="text-sky-400">JOIN</span> <span class="text-amber-300">`workshop_dataset.test_products`</span> <span class="text-emerald-300">p</span> <span class="text-sky-400">ON</span> <span class="text-emerald-300">o.product_id = p.id</span></p>
+                    <p class="pl-2"><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">o.order_date</span> &gt;= <span class="text-emerald-300">start_date</span></p>
+                    <p class="pl-4"><span class="text-sky-400">AND</span> <span class="text-emerald-300">o.status</span> = <span class="text-emerald-300">order_status</span></p>
+                    <p>);</p>
+                </div>
+            </div>
+            <!-- Cómo usarla -->
+            <div class="mt-6 p-4 bg-violet-50 border border-violet-100 rounded-xl">
+                <p class="text-xs font-bold text-violet-700 mb-3">¿Cómo se usa la Table Function?</p>
+                <div class="grid md:grid-cols-2 gap-3">
+                    <div class="bg-white rounded-lg p-3 border border-violet-100">
+                        <p class="text-xs font-semibold text-slate-700 mb-2">Llamarla directamente</p>
+                        <div class="bg-slate-900 rounded p-2 font-mono text-xs">
+                            <p><span class="text-sky-400">SELECT</span> * <span class="text-sky-400">FROM</span></p>
+                            <p class="pl-2"><span class="text-amber-300">fn_orders</span>(<span class="text-rose-300">'2024-01-01'</span>, <span class="text-rose-300">'completed'</span>)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-3 border border-violet-100">
+                        <p class="text-xs font-semibold text-slate-700 mb-2">Usarla en un reporte</p>
+                        <div class="bg-slate-900 rounded p-2 font-mono text-xs">
+                            <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">category</span>, <span class="text-sky-400">SUM</span>(<span class="text-emerald-300">revenue</span>)</p>
+                            <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">fn_orders</span>(<span class="text-sky-400">CURRENT_DATE</span>() - 30, <span class="text-rose-300">'completed'</span>)</p>
+                            <p><span class="text-sky-400">GROUP BY</span> <span class="text-emerald-300">category</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bloque B: Scheduled Queries -->
+        <div class="card-elevated p-8 md:p-12 mb-8 scroll-reveal">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="tag tag-amber">B</span>
+                <h3 class="text-xl font-extrabold text-slate-900">Scheduled Queries</h3>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-slate-500 text-sm mb-4">Las scheduled queries ejecutan una query automáticamente en un horario definido, sin intervención manual.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm">Configurar frecuencia: cada hora, diario, semanal</span></li>
+                        <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm">Definir destino: tabla donde se guardan los resultados</span></li>
+                        <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm">Modo <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">WRITE_TRUNCATE</code> vs <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">WRITE_APPEND</code></span></li>
+                        <li class="flex items-start gap-3"><span class="check-amber mt-0.5">✓</span><span class="text-slate-600 text-sm">Ver historial de ejecuciones y manejar errores con notificaciones</span></li>
+                    </ul>
+                </div>
+                <div class="card p-5" style="background:#f8fafc">
+                    <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-4">Configuración típica</p>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center text-sm"><span class="text-slate-500">Frecuencia</span><span class="tag tag-emerald">Diaria · 06:00 AM</span></div>
+                        <div class="flex justify-between items-center text-sm"><span class="text-slate-500">Tabla destino</span><span class="font-mono text-xs text-slate-700">workshop_dataset.daily_revenue</span></div>
+                        <div class="flex justify-between items-center text-sm"><span class="text-slate-500">Modo escritura</span><span class="tag tag-violet">WRITE_TRUNCATE</span></div>
+                        <div class="flex justify-between items-center text-sm"><span class="text-slate-500">Notificación</span><span class="tag tag-sky">Email al fallar</span></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pipeline flow -->
+            <div class="mt-6">
+                <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-3">Cómo funciona la pipeline completa</p>
+                <div class="flex items-center gap-2 overflow-x-auto pb-2">
+                    <div class="flex-shrink-0 text-center p-3 bg-violet-50 border border-violet-100 rounded-xl min-w-[100px]">
+                        <div class="text-lg mb-1">⚙️</div>
+                        <div class="text-xs font-semibold text-violet-700">Table Function</div>
+                        <div class="text-[10px] text-slate-400">fn_orders()</div>
+                    </div>
+                    <div class="text-slate-300 text-xl flex-shrink-0">→</div>
+                    <div class="flex-shrink-0 text-center p-3 bg-amber-50 border border-amber-100 rounded-xl min-w-[100px]">
+                        <div class="text-lg mb-1">🕔</div>
+                        <div class="text-xs font-semibold text-amber-700">Scheduled Query</div>
+                        <div class="text-[10px] text-slate-400">Corre sola cada día</div>
+                    </div>
+                    <div class="text-slate-300 text-xl flex-shrink-0">→</div>
+                    <div class="flex-shrink-0 text-center p-3 bg-sky-50 border border-sky-100 rounded-xl min-w-[100px]">
+                        <div class="text-lg mb-1">📊</div>
+                        <div class="text-xs font-semibold text-sky-700">Tabla destino</div>
+                        <div class="text-[10px] text-slate-400">daily_revenue</div>
+                    </div>
+                    <div class="text-slate-300 text-xl flex-shrink-0">→</div>
+                    <div class="flex-shrink-0 text-center p-3 bg-emerald-50 border border-emerald-100 rounded-xl min-w-[100px]">
+                        <div class="text-lg mb-1">📄</div>
+                        <div class="text-xs font-semibold text-emerald-700">Dashboard</div>
+                        <div class="text-[10px] text-slate-400">Looker / Sheets</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
+                    <span class="text-amber-500 flex-shrink-0">💡</span>
+                    <p class="text-slate-600 text-xs leading-relaxed"><strong>Zona horaria:</strong> BigQuery usa UTC por defecto. Si querés que la query corra a las 6 AM en Argentina (UTC-3), configurá el horario a las <strong>09:00 UTC</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bloque C: Tablas externas -->
+        <div class="card-elevated p-8 md:p-12 scroll-reveal">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="tag tag-emerald">C</span>
+                <h3 class="text-xl font-extrabold text-slate-900">Crear una tabla externa</h3>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-slate-500 text-sm mb-4">Una tabla externa vive en Google Sheets o Cloud Storage — BigQuery la consulta sin copiar los datos.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3"><span class="check-emerald mt-0.5">✓</span><span class="text-slate-600 text-sm">Crear tabla externa apuntando a un Google Sheet</span></li>
+                        <li class="flex items-start gap-3"><span class="check-emerald mt-0.5">✓</span><span class="text-slate-600 text-sm">Definir schema: nombres y tipos de columnas</span></li>
+                        <li class="flex items-start gap-3"><span class="check-emerald mt-0.5">✓</span><span class="text-slate-600 text-sm">Consultar la tabla con SQL normal</span></li>
+                        <li class="flex items-start gap-3"><span class="check-emerald mt-0.5">✓</span><span class="text-slate-600 text-sm">Ventaja clave: los datos se actualizan solos en el Sheet</span></li>
+                    </ul>
+                </div>
+                <div class="bg-slate-900 rounded-xl p-5 font-mono text-sm">
+                    <p class="text-slate-500 text-xs mb-3">-- Crear tabla externa desde Google Sheets</p>
+                    <p><span class="text-sky-400">CREATE OR REPLACE EXTERNAL TABLE</span></p>
+                    <p class="pl-2"><span class="text-amber-300">`workshop-495617.workshop_dataset.ext_budgets`</span></p>
+                    <p>(<span class="text-emerald-300">category STRING</span>, <span class="text-emerald-300">budget FLOAT64</span>,</p>
+                    <p class="pl-2"><span class="text-emerald-300">period STRING</span>)</p>
+                    <p><span class="text-sky-400">OPTIONS</span> (</p>
+                    <p class="pl-2"><span class="text-emerald-300">format</span> = <span class="text-rose-300">'GOOGLE_SHEETS'</span>,</p>
+                    <p class="pl-2"><span class="text-emerald-300">uris</span> = [<span class="text-rose-300">'https://docs.google.com/...'</span>],</p>
+                    <p class="pl-2"><span class="text-emerald-300">skip_leading_rows</span> = <span class="text-rose-300">1</span></p>
+                    <p>);</p>
+                </div>
+            </div>
+            <!-- Comparación tabla nativa vs externa -->
+            <div class="mt-6 grid md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                    <p class="text-xs font-bold text-emerald-700 mb-2">✅ Tabla externa — cuándo usarla</p>
+                    <ul class="space-y-1 text-xs text-slate-600">
+                        <li>→ El equipo actualiza el Sheet constantemente</li>
+                        <li>→ No querés duplicar los datos</li>
+                        <li>→ Datos de referencia que cambian poco (budgets, regiones)</li>
+                    </ul>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <p class="text-xs font-bold text-slate-600 mb-2">⚠️ Tabla nativa — cuándo conviene más</p>
+                    <ul class="space-y-1 text-xs text-slate-600">
+                        <li>→ Volumen grande de datos (miles de filas+)</li>
+                        <li>→ Necesitás velocidad de consulta óptima</li>
+                        <li>→ Datos históricos que ya no cambian</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     IA TRANSVERSAL
+══════════════════════════════════════ -->
+<section id="ia" class="py-24 px-6 md:px-10 max-w-6xl mx-auto">
+    <div class="text-center mb-16 scroll-reveal">
+        <span class="tag tag-amber mb-4 inline-block">Hilo conductor</span>
+        <h2 class="text-4xl md:text-5xl font-bold mb-4 text-slate-900">IA en todo el proceso</h2>
+        <p class="text-slate-500 max-w-2xl mx-auto">No es un módulo aparte — la IA acompaña cada paso del workshop. Desde la primera query hasta la rutina final.</p>
+    </div>
+    <!-- Intro contextual IA -->
+    <div class="card p-6 mb-10 scroll-reveal" style="border-left:4px solid #b45309;background:rgba(245,158,11,.03)">
+        <p class="text-slate-700 text-sm leading-relaxed"><strong>La IA como copiloto, no como reemplazo.</strong> No se trata de que la IA escriba todo por vos — se trata de ir más rápido, cometer menos errores y entender mejor lo que estás construyendo. En el workshop usamos IA en cada paso: para generar la primera query, para entender un error, y para conectar BigQuery directamente desde el IDE.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <div class="card p-7 card-hover scroll-reveal stagger-1">
+            <div class="w-10 h-10 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center mb-4">
+                <svg class="w-5 h-5 text-violet-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            </div>
+            <h4 class="font-bold text-slate-800 mb-2">Generar Queries con IA</h4>
+            <ul class="space-y-2 mt-2">
+                <li class="text-slate-600 text-sm flex items-start gap-2"><span class="check-violet">✓</span>Describís en lenguaje natural qué datos necesitás</li>
+                <li class="text-slate-600 text-sm flex items-start gap-2"><span class="check-violet">✓</span>La IA genera el SQL completo con explicación</li>
+                <li class="text-slate-600 text-sm flex items-start gap-2"><span class="check-violet">✓</span>Iterás con prompts: "agregale un filtro por mes"</li>
+            </ul>
+            <!-- Conversación completa prompt → SQL -->
+            <div class="mt-4 rounded-xl border border-slate-200 overflow-hidden text-xs">
+                <div class="bg-violet-50 px-3 py-2 border-b border-slate-200">
+                    <span class="text-violet-600 font-semibold">👤 Vos:</span>
+                    <p class="text-slate-700 mt-0.5">"Dame las ventas totales por región del último mes, solo las que superan $1000"</p>
+                </div>
+                <div class="bg-slate-900 px-3 py-2 font-mono">
+                    <p class="text-slate-400 text-[10px] mb-1">🤖 IA genera:</p>
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">region</span>, <span class="text-sky-400">SUM</span>(<span class="text-emerald-300">monto</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">total</span></p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`ventas.transacciones`</span></p>
+                    <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">DATE_TRUNC(fecha, MONTH)</span></p>
+                    <p class="pl-4">= <span class="text-sky-400">DATE_TRUNC</span>(<span class="text-sky-400">CURRENT_DATE</span>(), MONTH)</p>
+                    <p><span class="text-sky-400">GROUP BY</span> <span class="text-emerald-300">region</span></p>
+                    <p><span class="text-sky-400">HAVING</span> <span class="text-amber-300">total</span> &gt; <span class="text-rose-300">1000</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="card p-7 card-hover scroll-reveal stagger-2">
+            <div class="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center mb-4">
+                <svg class="w-5 h-5 text-sky-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h4 class="font-bold text-slate-800 mb-2">Debuggear y Optimizar</h4>
+            <ul class="space-y-2 mt-2">
+                <li class="text-slate-600 text-sm flex items-start gap-2"><span class="check-sky">✓</span>Pegás el error y la IA lo explica en plain text</li>
+                <li class="text-slate-600 text-sm flex items-start gap-2"><span class="check-sky">✓</span>Sugiere la corrección con contexto del problema</li>
+                <li class="text-slate-600 text-sm flex items-start gap-2"><span class="check-sky">✓</span>Detecta queries lentas y propone optimizaciones</li>
+            </ul>
+            <!-- Error + respuesta IA -->
+            <div class="mt-4 rounded-xl border border-slate-200 overflow-hidden text-xs">
+                <div class="bg-red-50 px-3 py-2 border-b border-red-100 font-mono text-red-600">
+                    Error: Column 'fecha' is ambiguous at [3:10]
+                </div>
+                <div class="bg-slate-50 px-3 py-2">
+                    <span class="text-sky-600 font-semibold">🤖 IA explica:</span>
+                    <p class="text-slate-600 mt-1 leading-relaxed">El campo <code class="font-mono bg-white border px-1 rounded">fecha</code> existe en ambas tablas del JOIN. Aclarale de cuál tabla viene: usá <code class="font-mono bg-white border px-1 rounded">t.fecha</code> en lugar de solo <code class="font-mono bg-white border px-1 rounded">fecha</code>.</p>
+                </div>
+            </div>
+        </div>
+        <div class="card p-7 card-hover scroll-reveal stagger-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-4">
+                <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+            </div>
+            <h4 class="font-bold text-slate-800 mb-2">MCP de BigQuery</h4>
+            <ul class="space-y-2 mt-2">
+                <li class="text-slate-600 text-sm flex items-start gap-2"><span class="check-emerald">✓</span>MCP = Model Context Protocol: la IA se conecta directo a BQ</li>
+                <li class="text-slate-600 text-sm flex items-start gap-2"><span class="check-emerald">✓</span>El modelo lee schemas, ejecuta queries y analiza resultados</li>
+                <li class="text-slate-600 text-sm flex items-start gap-2"><span class="check-emerald">✓</span>Demo: consultá datos desde tu IDE sin abrir la consola</li>
+            </ul>
+            <!-- Flujo MCP -->
+            <div class="mt-4 text-xs">
+                <div class="flex items-center gap-1.5 mb-1.5">
+                    <span class="bg-slate-800 text-emerald-300 font-mono px-2 py-0.5 rounded">IDE</span>
+                    <span class="text-slate-400">→ prompt →</span>
+                    <span class="bg-amber-100 text-amber-700 font-semibold px-2 py-0.5 rounded">Modelo IA</span>
+                    <span class="text-slate-400">→ MCP →</span>
+                    <span class="bg-sky-100 text-sky-700 font-semibold px-2 py-0.5 rounded">BigQuery</span>
+                </div>
+                <p class="text-slate-500 leading-relaxed">El modelo recibe el schema, ejecuta la query y devuelve el resultado — todo sin salir del editor.</p>
+            </div>
+            <div class="mt-3 p-2 bg-emerald-50 border border-emerald-100 rounded-xl text-center">
+                <span class="tag tag-emerald">Nivel avanzado · si llegamos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quote / highlight -->
+    <div class="card p-8 text-center scroll-reveal" style="border-left:4px solid #5b21b6">
+        <p class="text-xl text-slate-600 font-light italic max-w-2xl mx-auto">"Todo el proceso se hace junto a IA: desde escribir la primera query hasta armar la rutina final."</p>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     RESUMEN DEL CURSO
+══════════════════════════════════════ -->
+<section id="resumen" class="py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-6 md:px-10">
+        <div class="text-center mb-16 scroll-reveal">
+            <span class="tag tag-violet mb-4 inline-block">Resumen</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-slate-900">Lo que aprendiste hoy</h2>
+            <p class="text-slate-500 max-w-2xl mx-auto">Un repaso rápido de los conceptos y herramientas que vimos en el workshop.</p>
+        </div>
+
+        <!-- Cierre motivacional -->
+        <div class="card p-6 mb-10 scroll-reveal" style="background:linear-gradient(135deg,rgba(91,33,182,.05),rgba(14,165,233,.05));border:1px solid rgba(91,33,182,.12)">
+            <div class="flex items-start gap-4">
+                <span class="text-3xl flex-shrink-0">🎯</span>
+                <div>
+                    <p class="font-bold text-slate-800 mb-1">Hoy construiste algo real.</p>
+                    <p class="text-slate-600 text-sm leading-relaxed">Arrancaste desde SQL básico, navegaste BigQuery, conectaste un Google Sheet, armaste una rutina y la dejaste corriendo automáticamente — todo con IA como asistente. Eso es una pipeline de datos funcional.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen por módulo -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="card p-7 scroll-reveal stagger-1" style="border-top:3px solid #7c3aed">
+                <span class="tag tag-violet mb-4 inline-block">Módulo 1</span>
+                <h4 class="font-bold text-slate-800 mb-3">SQL desde cero</h4>
+                <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-violet">✓</span>SELECT, FROM, WHERE</li>
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-violet">✓</span>GROUP BY y agregaciones</li>
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-violet">✓</span>Dimensiones vs. Métricas</li>
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-violet">✓</span>Joins entre tablas</li>
+                </ul>
+            </div>
+            <div class="card p-7 scroll-reveal stagger-2" style="border-top:3px solid #0284c7">
+                <span class="tag tag-sky mb-4 inline-block">Módulo 2</span>
+                <h4 class="font-bold text-slate-800 mb-3">Entorno BigQuery</h4>
+                <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-sky">✓</span>Proyectos, Datasets, Tablas</li>
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-sky">✓</span>El editor de SQL en consola</li>
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-sky">✓</span>Schemas y preview de datos</li>
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-sky">✓</span>Vistas y rutinas</li>
+                </ul>
+            </div>
+            <div class="card p-7 scroll-reveal stagger-3" style="border-top:3px solid #059669">
+                <span class="tag tag-emerald mb-4 inline-block">Módulo 3</span>
+                <h4 class="font-bold text-slate-800 mb-3">Práctica real</h4>
+                <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-emerald">✓</span>Tabla externa desde Sheets</li>
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-emerald">✓</span>Rutina de consolidación</li>
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-emerald">✓</span>Scheduled queries automáticas</li>
+                    <li class="flex items-center gap-2 text-slate-600 text-sm"><span class="check-emerald">✓</span>IA en todo el flujo</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Conceptos clave -->
+        <div class="card-elevated p-8 md:p-10 mb-8 scroll-reveal">
+            <h3 class="text-xl font-extrabold text-slate-900 mb-6">Conceptos clave para llevarte</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <code class="text-xs bg-violet-100 text-violet-700 px-2 py-1 rounded font-mono font-bold flex-shrink-0 mt-0.5">SQL</code>
+                    <p class="text-slate-600 text-sm">Lenguaje para consultar bases de datos. Declarativo: describís <em>qué</em> querés, no <em>cómo</em> obtenerlo.</p>
+                </div>
+                <div class="flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <code class="text-xs bg-sky-100 text-sky-700 px-2 py-1 rounded font-mono font-bold flex-shrink-0 mt-0.5">Dataset</code>
+                    <p class="text-slate-600 text-sm">Contenedor de tablas en BigQuery. Equivale a una base de datos. Tiene región y permisos propios.</p>
+                </div>
+                <div class="flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <code class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded font-mono font-bold flex-shrink-0 mt-0.5">Rutina</code>
+                    <p class="text-slate-600 text-sm">Bloque de lógica SQL guardado y reutilizable. Se invoca con <code class="font-mono text-xs">CALL nombre()</code>.</p>
+                </div>
+                <div class="flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <code class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded font-mono font-bold flex-shrink-0 mt-0.5">Schedule</code>
+                    <p class="text-slate-600 text-sm">Query que se ejecuta automáticamente en un horario. Sin intervención humana.</p>
+                </div>
+                <div class="flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <code class="text-xs bg-rose-100 text-rose-700 px-2 py-1 rounded font-mono font-bold flex-shrink-0 mt-0.5">JOIN</code>
+                    <p class="text-slate-600 text-sm">Combinar dos tablas usando una columna en común (clave). Permite cruzar información de fuentes distintas.</p>
+                </div>
+                <div class="flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <code class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-mono font-bold flex-shrink-0 mt-0.5">MCP</code>
+                    <p class="text-slate-600 text-sm">Model Context Protocol: protocolo que permite a una IA conectarse a herramientas externas como BigQuery.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Próximos pasos -->
+        <div class="card-elevated p-8 md:p-10 scroll-reveal">
+            <h3 class="text-xl font-extrabold text-slate-900 mb-6">¿Qué sigue?</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="flex flex-col gap-2">
+                    <div class="w-10 h-10 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center mb-1">
+                        <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm">Practicá con tus propios datos</h4>
+                    <p class="text-slate-500 text-xs leading-relaxed">Conectá un Google Sheet tuyo como tabla externa y escribí tu primera query real sobre datos de tu negocio.</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div class="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center mb-1">
+                        <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm">Recursos de BigQuery</h4>
+                    <p class="text-slate-500 text-xs leading-relaxed">Documentación oficial de Google, BigQuery sandbox gratuito para practicar, y tutoriales de Coursera sobre SQL avanzado.</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-1">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm">Seguir aprendiendo con IA</h4>
+                    <p class="text-slate-500 text-xs leading-relaxed">Usá Gemini, ChatGPT o Claude para generar, debuggear y explicar queries. La IA es tu mejor par de programación.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer simple -->
+<footer class="py-10 px-6 text-center bg-slate-50 border-t border-slate-100">
+    <p class="text-sm text-slate-400">Hike Ecosystem · BigQuery & SQL con IA · 2025</p>
+</footer>
+
+<script>
+    const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('active')})},{threshold:.1});
+    document.querySelectorAll('.scroll-reveal').forEach(el=>obs.observe(el));
+    const sections=['hero','sql-intro','bigquery-env','practica','ia','resumen'];
+    const navItems=document.querySelectorAll('.snav-item');
+    navItems.forEach(i=>i.addEventListener('click',()=>document.getElementById(i.dataset.section)?.scrollIntoView({behavior:'smooth'})));
+    window.addEventListener('scroll',()=>{
+        let c=sections[0];
+        sections.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-200)c=id});
+        navItems.forEach(i=>i.classList.toggle('active',i.dataset.section===c));
+    });
+</script>
+</body>
+</html>
