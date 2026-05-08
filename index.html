@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -112,6 +113,33 @@
         <div class="stat-card float-anim" style="animation-delay:.8s"><div class="text-4xl font-extrabold gradient-text mb-2">Live</div><div class="text-sm font-semibold text-slate-600">Demo en vivo</div><div class="text-xs text-slate-400">Con datos reales</div></div>
         <div class="stat-card float-anim" style="animation-delay:1.2s"><div class="text-4xl font-extrabold gradient-text mb-2">IA</div><div class="text-sm font-semibold text-slate-600">Asistida</div><div class="text-xs text-slate-400">En todo el proceso</div></div>
     </div>
+    <!-- Module overview cards -->
+    <div class="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto mt-16 scroll-reveal stagger-3">
+        <div class="card p-5 text-left">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="tag tag-violet">Módulo 1</span>
+            </div>
+            <p class="font-bold text-slate-800 text-sm mb-1">SQL — El lenguaje de los datos</p>
+            <p class="text-slate-500 text-xs leading-relaxed">SELECT, WHERE, GROUP BY, JOINs. De cero a consultas reales sobre <code class="font-mono">test_customers</code>, <code class="font-mono">test_orders</code> y <code class="font-mono">test_products</code>.</p>
+            <div class="mt-3 flex items-center gap-1.5 text-xs text-violet-600 font-semibold"><i data-lucide="bot" class="w-3.5 h-3.5"></i> IA genera y explica cada query</div>
+        </div>
+        <div class="card p-5 text-left">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="tag tag-sky">Módulo 2</span>
+            </div>
+            <p class="font-bold text-slate-800 text-sm mb-1">BigQuery — La plataforma</p>
+            <p class="text-slate-500 text-xs leading-relaxed">Navegá el entorno de Google Cloud: proyectos, datasets, el editor SQL y cómo leer un schema de tabla.</p>
+            <div class="mt-3 flex items-center gap-1.5 text-xs text-sky-600 font-semibold"><i data-lucide="bot" class="w-3.5 h-3.5"></i> IA debuggea errores en tiempo real</div>
+        </div>
+        <div class="card p-5 text-left">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="tag tag-emerald">Módulo 3</span>
+            </div>
+            <p class="font-bold text-slate-800 text-sm mb-1">Práctica — Automatización</p>
+            <p class="text-slate-500 text-xs leading-relaxed">Table Functions, Scheduled Queries y tablas externas. Armá una pipeline que corra sola todos los días.</p>
+            <div class="mt-3 flex items-center gap-1.5 text-xs text-emerald-600 font-semibold"><i data-lucide="bot" class="w-3.5 h-3.5"></i> IA conectada a BigQuery vía MCP</div>
+        </div>
+    </div>
 </header>
 
 <!-- ══════════════════════════════════════
@@ -149,9 +177,20 @@
                     <p><span class="text-sky-400">WHERE</span> <span class="text-emerald-300">signup_date</span> <span class="text-white">&gt;=</span> <span class="text-rose-300">'2024-01-01'</span></p>
                 </div>
             </div>
+            <!-- test_customers table summary -->
+            <div class="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <p class="text-xs font-bold text-slate-600 mb-3 flex items-center gap-1.5"><i data-lucide="table" class="w-3.5 h-3.5"></i> Tabla que vamos a usar: <code class="font-mono text-violet-700">test_customers</code></p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 font-mono text-xs">
+                    <div class="bg-white rounded-lg p-2 border"><span class="text-emerald-600">id</span><br><span class="text-slate-400">STRING</span></div>
+                    <div class="bg-white rounded-lg p-2 border"><span class="text-emerald-600">name</span><br><span class="text-slate-400">STRING</span></div>
+                    <div class="bg-white rounded-lg p-2 border"><span class="text-emerald-600">email</span><br><span class="text-slate-400">STRING</span></div>
+                    <div class="bg-white rounded-lg p-2 border"><span class="text-emerald-600">country</span><br><span class="text-slate-400">STRING</span></div>
+                    <div class="bg-white rounded-lg p-2 border md:col-span-2"><span class="text-emerald-600">signup_date</span><br><span class="text-slate-400">DATE</span></div>
+                </div>
+            </div>
             <!-- Tip -->
-            <div class="mt-6 p-4 rounded-xl bg-amber-50 border border-amber-100 flex items-start gap-3">
-                <span class="text-amber-500 text-lg flex-shrink-0">💡</span>
+            <div class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-100 flex items-start gap-3">
+                <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5"></i>
                 <p class="text-slate-600 text-xs leading-relaxed"><strong>Regla de oro:</strong> Una query SQL se lee de adentro hacia afuera. Primero <code class="font-mono">FROM</code> (de dónde vengo), después <code class="font-mono">WHERE</code> (qué filtro), y por último <code class="font-mono">SELECT</code> (qué muestro). El orden en que <em>escribís</em> no es el orden en que <em>se ejecuta</em>.</p>
             </div>
         </div>
@@ -170,30 +209,12 @@
                     <li class="flex items-start gap-3"><span class="check-sky mt-0.5">✓</span><span class="text-slate-600 text-sm"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">HAVING</code> vs <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">WHERE</code>: cuándo usar cada uno</span></li>
                 </ul>
                 <div class="bg-slate-900 text-slate-300 rounded-xl p-5 font-mono text-sm">
-                    <p class="text-slate-500 text-xs mb-3">-- Órdenes por categoría de producto</p>
-                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">p.category</span>, <span class="text-sky-400">COUNT</span>(*) <span class="text-sky-400">AS</span> <span class="text-amber-300">total_ordenes</span>,</p>
-                    <p class="pl-4"><span class="text-sky-400">SUM</span>(<span class="text-emerald-300">o.quantity * p.price</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">revenue</span></p>
-                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop_dataset.test_orders`</span> <span class="text-emerald-300">o</span></p>
-                    <p><span class="text-sky-400">JOIN</span> <span class="text-amber-300">`workshop_dataset.test_products`</span> <span class="text-emerald-300">p</span></p>
-                    <p class="pl-4"><span class="text-sky-400">ON</span> <span class="text-emerald-300">o.product_id = p.id</span></p>
-                    <p><span class="text-sky-400">GROUP BY</span> <span class="text-emerald-300">p.category</span></p>
-                    <p><span class="text-sky-400">ORDER BY</span> <span class="text-amber-300">revenue</span> <span class="text-sky-400">DESC</span></p>
-                </div>
-            </div>
-            <!-- HAVING vs WHERE tip -->
-            <div class="mt-6 p-4 rounded-xl bg-sky-50 border border-sky-100">
-                <p class="text-xs font-bold text-sky-700 mb-2">WHERE vs HAVING — ¿cuál usar?</p>
-                <div class="grid md:grid-cols-2 gap-3">
-                    <div class="bg-white rounded-lg p-3 border border-sky-100">
-                        <p class="text-xs font-semibold text-slate-700 mb-1">WHERE</p>
-                        <p class="text-xs text-slate-500">Filtra <strong>filas individuales</strong> antes de agrupar. Trabaja sobre datos crudos.</p>
-                        <p class="font-mono text-xs text-slate-600 mt-2">WHERE monto &gt; 100</p>
-                    </div>
-                    <div class="bg-white rounded-lg p-3 border border-sky-100">
-                        <p class="text-xs font-semibold text-slate-700 mb-1">HAVING</p>
-                        <p class="text-xs text-slate-500">Filtra <strong>grupos</strong> después de agrupar. Trabaja sobre el resultado del GROUP BY.</p>
-                        <p class="font-mono text-xs text-slate-600 mt-2">HAVING SUM(monto) &gt; 1000</p>
-                    </div>
+                    <p class="text-slate-500 text-xs mb-3">-- ¿Cuántas órdenes hay por estado?</p>
+                    <p><span class="text-sky-400">SELECT</span> <span class="text-emerald-300">status</span>, <span class="text-sky-400">COUNT</span>(*) <span class="text-sky-400">AS</span> <span class="text-amber-300">total</span>,</p>
+                    <p class="pl-4"><span class="text-sky-400">SUM</span>(<span class="text-emerald-300">quantity</span>) <span class="text-sky-400">AS</span> <span class="text-amber-300">items_totales</span></p>
+                    <p><span class="text-sky-400">FROM</span> <span class="text-amber-300">`workshop-495617.workshop_dataset.test_orders`</span></p>
+                    <p><span class="text-sky-400">GROUP BY</span> <span class="text-emerald-300">status</span></p>
+                    <p><span class="text-sky-400">ORDER BY</span> <span class="text-amber-300">total</span> <span class="text-sky-400">DESC</span></p>
                 </div>
             </div>
         </div>
@@ -292,7 +313,7 @@
                 </div>
             </div>
             <div class="mt-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-xs text-slate-600">
-                <strong class="text-emerald-700">Resultado:</strong> Ana → $80 · Luis → $80 · Marta → NULL (no tiene compras, pero aparece por el LEFT JOIN)
+                <strong class="text-emerald-700">Resultado:</strong> Alice → 2 órdenes · Bob → 1 orden · Carol → NULL (no tiene órdenes, pero aparece por el LEFT JOIN)
             </div>
             <!-- Venn diagram: tipos de JOIN -->
             <div class="mt-6 text-center">
@@ -809,7 +830,7 @@
                 </div>
                 <div class="mt-4 p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
                     <span class="text-amber-500 flex-shrink-0">💡</span>
-                    <p class="text-slate-600 text-xs leading-relaxed"><strong>Zona horaria:</strong> BigQuery usa UTC por defecto. Si querés que la query corra a las 6 AM en Argentina (UTC-3), configurá el horario a las <strong>09:00 UTC</strong>.</p>
+                    <p class="text-slate-600 text-xs leading-relaxed"><strong>Zona horaria:</strong> BigQuery usa UTC por defecto. Si querés que la query corra a las 6 AM en Lima, Perú (UTC-5), configurá el horario a las <strong>11:00 UTC</strong>.</p>
                 </div>
             </div>
         </div>
@@ -1087,7 +1108,7 @@
 <script>
     const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('active')})},{threshold:.1});
     document.querySelectorAll('.scroll-reveal').forEach(el=>obs.observe(el));
-    const sections=['hero','sql-intro','bigquery-env','practica','ia','resumen'];
+    const sections=['hero','sql-intro','ejercicios','bigquery-env','practica','ia','resumen'];
     const navItems=document.querySelectorAll('.snav-item');
     navItems.forEach(i=>i.addEventListener('click',()=>document.getElementById(i.dataset.section)?.scrollIntoView({behavior:'smooth'})));
     window.addEventListener('scroll',()=>{
@@ -1095,6 +1116,7 @@
         sections.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-200)c=id});
         navItems.forEach(i=>i.classList.toggle('active',i.dataset.section===c));
     });
+    lucide.createIcons();
 </script>
 </body>
 </html>
