@@ -104,6 +104,10 @@
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 Abrir BigQuery Console
             </a>
+            <button onclick="document.getElementById('sql-ref-modal').classList.remove('hidden')" class="flex items-center gap-2 px-8 py-4 rounded-xl font-bold border-2 border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 hover:border-violet-400 transition-all">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Referencia SQL
+            </button>
         </div>
     </div>
     <!-- Stats -->
@@ -1118,5 +1122,277 @@
     });
     lucide.createIcons();
 </script>
+
+<!-- ══════════════════════════════════════
+     MODAL — REFERENCIA SQL
+══════════════════════════════════════ -->
+<div id="sql-ref-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(15,23,42,.7);backdrop-filter:blur(6px)">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden" style="border:1px solid rgba(91,33,182,.12)">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-8 py-5 border-b border-slate-100" style="background:linear-gradient(135deg,#f5f3ff,#eff6ff)">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#5b21b6,#0ea5e9)">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <div>
+          <h2 class="font-extrabold text-slate-900 text-lg leading-tight">Referencia SQL — BigQuery</h2>
+          <p class="text-xs text-slate-400">Cláusulas principales con descripción breve</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <input id="sql-search" oninput="filterSQL(this.value)" placeholder="Buscar cláusula..." class="text-sm border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-violet-400 w-48 transition-all" style="font-family:inherit">
+        <button onclick="document.getElementById('sql-ref-modal').classList.add('hidden')" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all flex-shrink-0">
+          <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Body -->
+    <div class="overflow-y-auto px-8 py-6 space-y-8" id="sql-modal-body">
+
+      <!-- SELECCIÓN -->
+      <div class="sql-category">
+        <p class="text-[10px] font-extrabold uppercase tracking-widest text-violet-600 mb-3 flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full bg-violet-400"></span>Selección de datos</p>
+        <div class="grid md:grid-cols-2 gap-2" id="cat-seleccion">
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-violet-200 hover:bg-violet-50 transition-all">
+            <code class="text-violet-700 font-extrabold text-sm">SELECT</code>
+            <p class="text-slate-500 text-xs mt-1">Elige qué columnas (o expresiones) devolver en el resultado.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-violet-200 hover:bg-violet-50 transition-all">
+            <code class="text-violet-700 font-extrabold text-sm">FROM</code>
+            <p class="text-slate-500 text-xs mt-1">Define la tabla o subquery de origen de los datos.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-violet-200 hover:bg-violet-50 transition-all">
+            <code class="text-violet-700 font-extrabold text-sm">DISTINCT</code>
+            <p class="text-slate-500 text-xs mt-1">Elimina filas duplicadas del resultado: <code class="font-mono bg-white px-1 rounded">SELECT DISTINCT country</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-violet-200 hover:bg-violet-50 transition-all">
+            <code class="text-violet-700 font-extrabold text-sm">AS</code>
+            <p class="text-slate-500 text-xs mt-1">Asigna un alias a una columna o tabla: <code class="font-mono bg-white px-1 rounded">COUNT(*) AS total</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-violet-200 hover:bg-violet-50 transition-all">
+            <code class="text-violet-700 font-extrabold text-sm">LIMIT</code>
+            <p class="text-slate-500 text-xs mt-1">Restringe la cantidad de filas devueltas: <code class="font-mono bg-white px-1 rounded">LIMIT 100</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-violet-200 hover:bg-violet-50 transition-all">
+            <code class="text-violet-700 font-extrabold text-sm">ORDER BY</code>
+            <p class="text-slate-500 text-xs mt-1">Ordena los resultados por una o más columnas. <code class="font-mono bg-white px-1 rounded">ASC</code> (defecto) o <code class="font-mono bg-white px-1 rounded">DESC</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTRADO -->
+      <div class="sql-category">
+        <p class="text-[10px] font-extrabold uppercase tracking-widest text-sky-600 mb-3 flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full bg-sky-400"></span>Filtrado</p>
+        <div class="grid md:grid-cols-2 gap-2">
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-sky-200 hover:bg-sky-50 transition-all">
+            <code class="text-sky-700 font-extrabold text-sm">WHERE</code>
+            <p class="text-slate-500 text-xs mt-1">Filtra filas individuales <strong>antes</strong> de agrupar. Ej: <code class="font-mono bg-white px-1 rounded">WHERE status = 'active'</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-sky-200 hover:bg-sky-50 transition-all">
+            <code class="text-sky-700 font-extrabold text-sm">HAVING</code>
+            <p class="text-slate-500 text-xs mt-1">Filtra grupos <strong>después</strong> del GROUP BY. Ej: <code class="font-mono bg-white px-1 rounded">HAVING COUNT(*) > 5</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-sky-200 hover:bg-sky-50 transition-all">
+            <code class="text-sky-700 font-extrabold text-sm">AND / OR / NOT</code>
+            <p class="text-slate-500 text-xs mt-1">Combina condiciones en el WHERE: <code class="font-mono bg-white px-1 rounded">WHERE a=1 AND b=2</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-sky-200 hover:bg-sky-50 transition-all">
+            <code class="text-sky-700 font-extrabold text-sm">IN</code>
+            <p class="text-slate-500 text-xs mt-1">Comprueba si un valor está en una lista: <code class="font-mono bg-white px-1 rounded">WHERE country IN ('PE','MX')</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-sky-200 hover:bg-sky-50 transition-all">
+            <code class="text-sky-700 font-extrabold text-sm">BETWEEN</code>
+            <p class="text-slate-500 text-xs mt-1">Filtra en un rango inclusivo: <code class="font-mono bg-white px-1 rounded">WHERE price BETWEEN 10 AND 50</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-sky-200 hover:bg-sky-50 transition-all">
+            <code class="text-sky-700 font-extrabold text-sm">LIKE</code>
+            <p class="text-slate-500 text-xs mt-1">Busca un patrón en texto: <code class="font-mono bg-white px-1 rounded">WHERE name LIKE 'Al%'</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-sky-200 hover:bg-sky-50 transition-all">
+            <code class="text-sky-700 font-extrabold text-sm">IS NULL / IS NOT NULL</code>
+            <p class="text-slate-500 text-xs mt-1">Verifica si un campo está vacío o tiene valor.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGREGACIÓN -->
+      <div class="sql-category">
+        <p class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 mb-3 flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>Agrupación y agregación</p>
+        <div class="grid md:grid-cols-2 gap-2">
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+            <code class="text-emerald-700 font-extrabold text-sm">GROUP BY</code>
+            <p class="text-slate-500 text-xs mt-1">Agrupa filas con el mismo valor para aplicar funciones de agregación.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+            <code class="text-emerald-700 font-extrabold text-sm">COUNT()</code>
+            <p class="text-slate-500 text-xs mt-1">Cuenta filas. <code class="font-mono bg-white px-1 rounded">COUNT(*)</code> cuenta todas; <code class="font-mono bg-white px-1 rounded">COUNT(col)</code> excluye NULLs.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+            <code class="text-emerald-700 font-extrabold text-sm">SUM()</code>
+            <p class="text-slate-500 text-xs mt-1">Suma los valores numéricos de una columna: <code class="font-mono bg-white px-1 rounded">SUM(revenue)</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+            <code class="text-emerald-700 font-extrabold text-sm">AVG()</code>
+            <p class="text-slate-500 text-xs mt-1">Calcula el promedio de una columna numérica.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+            <code class="text-emerald-700 font-extrabold text-sm">MIN() / MAX()</code>
+            <p class="text-slate-500 text-xs mt-1">Devuelve el valor mínimo o máximo de una columna.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+            <code class="text-emerald-700 font-extrabold text-sm">COUNT(DISTINCT)</code>
+            <p class="text-slate-500 text-xs mt-1">Cuenta valores únicos: <code class="font-mono bg-white px-1 rounded">COUNT(DISTINCT customer_id)</code></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOINS -->
+      <div class="sql-category">
+        <p class="text-[10px] font-extrabold uppercase tracking-widest text-amber-600 mb-3 flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full bg-amber-400"></span>Joins — combinar tablas</p>
+        <div class="grid md:grid-cols-2 gap-2">
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:bg-amber-50 transition-all">
+            <code class="text-amber-700 font-extrabold text-sm">INNER JOIN</code>
+            <p class="text-slate-500 text-xs mt-1">Solo devuelve filas que tienen coincidencia en <strong>ambas</strong> tablas.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:bg-amber-50 transition-all">
+            <code class="text-amber-700 font-extrabold text-sm">LEFT JOIN</code>
+            <p class="text-slate-500 text-xs mt-1">Devuelve <strong>todas</strong> las filas de la tabla izquierda, con NULL donde no hay coincidencia.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:bg-amber-50 transition-all">
+            <code class="text-amber-700 font-extrabold text-sm">RIGHT JOIN</code>
+            <p class="text-slate-500 text-xs mt-1">Devuelve <strong>todas</strong> las filas de la tabla derecha. Poco usado; se prefiere LEFT JOIN invirtiendo el orden.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:bg-amber-50 transition-all">
+            <code class="text-amber-700 font-extrabold text-sm">FULL OUTER JOIN</code>
+            <p class="text-slate-500 text-xs mt-1">Devuelve todas las filas de ambas tablas, con NULL donde no hay match.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:bg-amber-50 transition-all">
+            <code class="text-amber-700 font-extrabold text-sm">CROSS JOIN</code>
+            <p class="text-slate-500 text-xs mt-1">Producto cartesiano: combina cada fila de A con cada fila de B.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:bg-amber-50 transition-all">
+            <code class="text-amber-700 font-extrabold text-sm">ON</code>
+            <p class="text-slate-500 text-xs mt-1">Define la condición del join: <code class="font-mono bg-white px-1 rounded">ON a.id = b.customer_id</code></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONJUNTOS -->
+      <div class="sql-category">
+        <p class="text-[10px] font-extrabold uppercase tracking-widest text-rose-600 mb-3 flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full bg-rose-400"></span>Operaciones de conjuntos</p>
+        <div class="grid md:grid-cols-2 gap-2">
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-rose-200 hover:bg-rose-50 transition-all">
+            <code class="text-rose-700 font-extrabold text-sm">UNION ALL</code>
+            <p class="text-slate-500 text-xs mt-1">Apila resultados de dos queries, <strong>conservando duplicados</strong>. Más rápido que UNION.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-rose-200 hover:bg-rose-50 transition-all">
+            <code class="text-rose-700 font-extrabold text-sm">UNION</code>
+            <p class="text-slate-500 text-xs mt-1">Apila resultados eliminando duplicados (equivale a UNION ALL + DISTINCT).</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-rose-200 hover:bg-rose-50 transition-all">
+            <code class="text-rose-700 font-extrabold text-sm">EXCEPT</code>
+            <p class="text-slate-500 text-xs mt-1">Devuelve filas del primer query que <strong>no</strong> están en el segundo.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-rose-200 hover:bg-rose-50 transition-all">
+            <code class="text-rose-700 font-extrabold text-sm">INTERSECT</code>
+            <p class="text-slate-500 text-xs mt-1">Devuelve solo las filas que aparecen en <strong>ambos</strong> queries.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBQUERIES / CTEs -->
+      <div class="sql-category">
+        <p class="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 mb-3 flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full bg-indigo-400"></span>Subqueries y CTEs</p>
+        <div class="grid md:grid-cols-2 gap-2">
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50 transition-all">
+            <code class="text-indigo-700 font-extrabold text-sm">WITH (CTE)</code>
+            <p class="text-slate-500 text-xs mt-1">Define una tabla temporal nombrada para usar en la misma query. Mejora legibilidad.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50 transition-all">
+            <code class="text-indigo-700 font-extrabold text-sm">Subquery</code>
+            <p class="text-slate-500 text-xs mt-1">Query anidada dentro de otra: <code class="font-mono bg-white px-1 rounded">FROM (SELECT ...)</code> o en el WHERE.</p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50 transition-all">
+            <code class="text-indigo-700 font-extrabold text-sm">EXISTS</code>
+            <p class="text-slate-500 text-xs mt-1">Devuelve TRUE si una subquery retorna al menos una fila.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FUNCIONES BIGQUERY -->
+      <div class="sql-category">
+        <p class="text-[10px] font-extrabold uppercase tracking-widest text-teal-600 mb-3 flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full bg-teal-400"></span>Funciones útiles en BigQuery</p>
+        <div class="grid md:grid-cols-2 gap-2">
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">DATE_TRUNC()</code>
+            <p class="text-slate-500 text-xs mt-1">Trunca una fecha a la unidad indicada: <code class="font-mono bg-white px-1 rounded">DATE_TRUNC(date, MONTH)</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">FORMAT_DATE()</code>
+            <p class="text-slate-500 text-xs mt-1">Da formato a una fecha: <code class="font-mono bg-white px-1 rounded">FORMAT_DATE('%Y-%m', date)</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">DATE_DIFF()</code>
+            <p class="text-slate-500 text-xs mt-1">Diferencia entre fechas: <code class="font-mono bg-white px-1 rounded">DATE_DIFF(date1, date2, DAY)</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">EXTRACT()</code>
+            <p class="text-slate-500 text-xs mt-1">Extrae parte de una fecha: <code class="font-mono bg-white px-1 rounded">EXTRACT(YEAR FROM date)</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">ROUND()</code>
+            <p class="text-slate-500 text-xs mt-1">Redondea un número: <code class="font-mono bg-white px-1 rounded">ROUND(price * qty, 2)</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">COALESCE()</code>
+            <p class="text-slate-500 text-xs mt-1">Devuelve el primer valor no-NULL de la lista: <code class="font-mono bg-white px-1 rounded">COALESCE(col, 0)</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">CASE WHEN</code>
+            <p class="text-slate-500 text-xs mt-1">Lógica condicional: <code class="font-mono bg-white px-1 rounded">CASE WHEN x>0 THEN 'pos' ELSE 'neg' END</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">CAST()</code>
+            <p class="text-slate-500 text-xs mt-1">Convierte tipos de dato: <code class="font-mono bg-white px-1 rounded">CAST(id AS STRING)</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">CONCAT()</code>
+            <p class="text-slate-500 text-xs mt-1">Une strings: <code class="font-mono bg-white px-1 rounded">CONCAT(first_name, ' ', last_name)</code></p>
+          </div>
+          <div class="sql-item p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50 transition-all">
+            <code class="text-teal-700 font-extrabold text-sm">IF()</code>
+            <p class="text-slate-500 text-xs mt-1">Condicional inline: <code class="font-mono bg-white px-1 rounded">IF(status='ok', 1, 0)</code></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- Footer -->
+    <div class="px-8 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+      <p class="text-xs text-slate-400">BigQuery Standard SQL · <a href="https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax" target="_blank" class="text-violet-500 hover:underline">Documentación oficial →</a></p>
+      <button onclick="document.getElementById('sql-ref-modal').classList.add('hidden')" class="px-5 py-2 rounded-xl bg-slate-800 text-white text-sm font-semibold hover:bg-slate-700 transition-all">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function filterSQL(q) {
+  q = q.toLowerCase();
+  document.querySelectorAll('.sql-item').forEach(el => {
+    el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+  document.querySelectorAll('.sql-category').forEach(cat => {
+    const visible = [...cat.querySelectorAll('.sql-item')].some(i => i.style.display !== 'none');
+    cat.style.display = visible ? '' : 'none';
+  });
+}
+document.getElementById('sql-ref-modal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.add('hidden');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('sql-ref-modal').classList.add('hidden');
+});
+</script>
+
 </body>
 </html>
